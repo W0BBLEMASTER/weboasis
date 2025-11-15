@@ -44,7 +44,7 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 ---
 ## DEBUG
 
-```To Be Updated As More Bugfixes Arrive!```
+```PROTO3, Attempts to reimpliment searchbar functionality.```
 
 ## FIXES
 ✅ The primary bug concerning assets (CSS, JavaScript, images) not loading due to incorrect MIME types when linked from `raw.githubusercontent.com` has been resolved by switching to `jsDelivr` as a CDN.
