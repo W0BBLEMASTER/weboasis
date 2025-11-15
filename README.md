@@ -15,6 +15,8 @@ All local asset paths in `index.html` were updated to point to the raw files in 
 - JavaScript files (`.js`)
 - Images and favicons (`.svg`, `.png`, etc.)
 
+Furthermore, it was identified that linking directly to `raw.githubusercontent.com` for assets caused issues with browsers incorrectly interpreting MIME types (e.g., CSS and JavaScript files were often treated as plain text). To resolve this, all asset URLs were updated to use `https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/`, leveraging `jsDelivr` as a CDN to ensure correct content type delivery and improve loading performance.
+
 **Example:**
 ```diff
 - <link rel="stylesheet" type="text/css" href="css/style.min.css" />
@@ -47,5 +49,14 @@ To address issues with background images not loading on the live Blogspot theme,
 - **`blogspot_theme_debug.xml`**: A copy of the main theme file that links to an unminified JavaScript file.
 - **`js/custom.js`**: An unminified version of `custom.min.js` where the background image paths have been converted from relative (`media/bg/bg1.jpg`) to absolute URLs (`https://raw.githubusercontent.com/W0BBLEMASTER/weboasis/master/media/bg/bg1.jpg`). This ensures the theme can locate the assets hosted on GitHub.
 
+## FIXES
+✅ The primary bug concerning assets (CSS, JavaScript, images) not loading due to incorrect MIME types when linked from `raw.githubusercontent.com` has been resolved by switching to `jsDelivr` as a CDN.
+
 ## BUGS
-�   You tell me...
+- Searchbar doesn't load in.
+- Buttons BELOW searchbar don't load in.
+- "Add links" text button is broken, but the button itself is still functional.
+- Background animations do not change when "Trails, Stars etc." are clicked.
+- No edit buttons.
+- No system info on the topright.
+- No leftside buttons.
