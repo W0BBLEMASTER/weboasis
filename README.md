@@ -44,10 +44,7 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 ---
 ## DEBUG
 
-To address issues with background images not loading on the live Blogspot theme, a debug version of the theme was created.
-
-- **`blogspot_theme_debug.xml`**: A copy of the main theme file that links to an unminified JavaScript file.
-- **`js/custom.js`**: An unminified version of `custom.min.js` where the background image paths have been converted from relative (`media/bg/bg1.jpg`) to absolute URLs (`https://raw.githubusercontent.com/W0BBLEMASTER/weboasis/master/media/bg/bg1.jpg`). This ensures the theme can locate the assets hosted on GitHub.
+```To Be Updated As More Bugfixes Arrive!```
 
 ## FIXES
 ✅ The primary bug concerning assets (CSS, JavaScript, images) not loading due to incorrect MIME types when linked from `raw.githubusercontent.com` has been resolved by switching to `jsDelivr` as a CDN.
