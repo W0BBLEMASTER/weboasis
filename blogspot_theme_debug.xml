@@ -332,31 +332,71 @@
         buildSystemInfo();
         buildDate();
         buildMenu();
+        
+        var currentAnimationInterval;
+
+        function clearOldCanvas(){
+            if(currentAnimationInterval) clearInterval(currentAnimationInterval);
+            let t=document.getElementById("canvasContainer");
+            for(;t.firstChild;)t.removeChild(t.firstChild);
+        }
+
+        function runAnimation(animationName) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/" + animationName + ".js");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var script = xhr.responseText;
+                        script = script.replace("setInterval", "currentAnimationInterval = setInterval");
+                        eval(script);
+                    } catch (e) {
+                        console.error("Error executing animation script: " + animationName, e);
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        window.canvasApp = function() {};
+
+        var animation = GetCookie("animation");
+        if (animation){
+            runAnimation(animation);
+        } else {
+            runAnimation("matrix");
+        }
 
         // Fix for animation buttons
         document.getElementById("stars").addEventListener("click", function () {
           clearOldCanvas();
-          setAnimation("stars");
+          runAnimation("stars");
+          SetCookie("animation", "stars", 31536000000);
         });
         document.getElementById("trails").addEventListener("click", function () {
           clearOldCanvas();
-          setAnimation("trails");
+          runAnimation("trails");
+          SetCookie("animation", "trails", 31536000000);
         });
         document.getElementById("nodes").addEventListener("click", function () {
           clearOldCanvas();
-          setAnimation("nodes");
+          runAnimation("nodes");
+          SetCookie("animation", "nodes", 31536000000);
         });
         document.getElementById("gradient").addEventListener("click", function () {
           clearOldCanvas();
-          setAnimation("gradient");
+          runAnimation("gradient");
+          SetCookie("animation", "gradient", 31536000000);
         });
         document.getElementById("circuits").addEventListener("click", function () {
           clearOldCanvas();
-          setAnimation("circuits");
+          runAnimation("circuits");
+          SetCookie("animation", "circuits", 31536000000);
         });
         document.getElementById("matrix").addEventListener("click", function () {
           clearOldCanvas();
-          setAnimation("matrix");
+          runAnimation("matrix");
+          SetCookie("animation", "matrix", 31536000000);
         });
       });
 //]]>
