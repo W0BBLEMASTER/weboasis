@@ -48,6 +48,9 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 PROTO3, Attempts to reimpliment searchbar functionality.
 ✅ The primary bug concerning assets (CSS, JavaScript, images) not loading due to incorrect MIME types when linked from `raw.githubusercontent.com` has been resolved by switching to `jsDelivr` as a CDN.
 ✅ Background animations now load correctly.
+✅ Rightside hamburger button fixed.
+✅ Searchbar fixed.
+✅ Searchbar buttons loading fixed.
 ```
 
 ### Background Animation Fix
@@ -63,13 +66,10 @@ The following changes were made to `blogspot_theme_debug.xml` to fix this issue:
 7.  The logic to load the animation from the cookie on page load was added.
 8.  A `currentAnimationInterval` variable was added to keep track of the animation interval and clear it when a new animation is selected.
 
-## FIXES
-Still in Debug
-
 ## BUGS
-- Searchbar doesn't load in.
-- Buttons BELOW searchbar don't load in.
-- "Add links" text button is broken, but the button itself is still functional.
-- No edit buttons.
-- No system info on the topright.
-- No leftside buttons.
+- System info bugs out on various browsers.
+- Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent
+- NEWS, CRYPTO, etc buttons on hamburger menu LEFT do *nothing*. 
+- Chat button leads to dead link.
+- Easter egg not functional (*yet*).
+
