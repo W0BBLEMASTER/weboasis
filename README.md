@@ -42,7 +42,7 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 4.  Paste the content into the editor and save.
 
 ---
-## DEBUG
+## DEBUG/BUGFIXES
 
 ```
 PROTO3, Attempts to reimpliment searchbar functionality.
@@ -53,6 +53,7 @@ PROTO3, Attempts to reimpliment searchbar functionality.
 ✅ Searchbar buttons loading fixed.
 ✅ Added Easter Egg!!!
 ✅ Fixed chat button by redirecting to Windows93's Trollbox!
+✅ Fixed hamburger menu links by pointing to the correct index.html files on the weboasis github repo via raw.githack.com.
 ```
 
 ### Background Animation Fix
@@ -71,7 +72,5 @@ The following changes were made to `blogspot_theme_debug.xml` to fix this issue:
 ## BUGS
 - System info bugs out on various browsers, (Cores and screensize).
 - Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent.
-- NEWS, CRYPTO, etc buttons on hamburger menu LEFT do *nothing*. 
-
 
 

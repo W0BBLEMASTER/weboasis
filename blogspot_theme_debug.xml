@@ -59,28 +59,28 @@
     <div id="mySidenav" class="sidenav" onMouseLeave="closeNav()">
         <a href="javascript:void(0);" class="closebtn" onclick="closeNav()">&#215;</a>
         <menu>
-            <a href='#'>News</a>
-            <a href='#'>Tech</a>
-            <a href='#'>Twitter</a>
-            <a href='#'>Crypto</a>
-            <a href='#'>Stocks</a>
-            <a href='#'>Convert</a>
-            <a href='#'>Weather</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/news/index.html'>News</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/tech/index.html'>Tech</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/twitter/index.html'>Twitter</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/crypto/index.html'>Crypto</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/stocks/index.html'>Stocks</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/convert/index.html'>Convert</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/weather/index.html'>Weather</a>
             <a href='https://g0.si'>ShortURL</a>
-            <a href='#'>Editors</a>
-            <a href='#'>Magnet</a>
-            <a href='#'>Stream</a>
-            <a href='#'>Arcade</a>
-            <a href='#'>Upload</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/editors/index.html'>Editors</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/magnet/magnet/index.html'>Magnet</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/stream/index.html'>Stream</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/arcade/index.html'>Arcade</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/upload/index.html'>Upload</a>
             <a href='#'>Image</a>
 			<a href='http://streamwat.ch/radio/'>Radio</a>
 			<a href='#'>Forum</a>
             <a href='https://www.windows93.net/#!trollbox'>Chat</a>
 			<a href='http://streamwat.ch'>Live</a>
-			<a href='#'>Todo</a>
-			<a href='#'>Text</a>
-            <a href='#'>FAQ</a>
-            <a href='#'>QR</a>
+			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/todo/index.html'>Todo</a>
+			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/text/index.html'>Text</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/faq/index.html'>FAQ</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/qr/index.html'>QR</a>
         </menu><hr/>
         <div id="customcontainer">
             <div id="show-hide-customization">
