@@ -143,6 +143,7 @@
                 <p id="nodes" class="btn hollow small animationBtn">Nodes</p>
 				<span id="gradient" class="btn hollow small animationBtn">Gradient</span>
                 <p id="circuits" class="btn hollow small animationBtn">Circuits</p>
+                <p id="classic" class="btn hollow small animationBtn">Classic</p>
                 <span id="matrix" class="btn hollow small reset animationBtn">Reset Animation</span>
             </div>
         </div>
@@ -166,7 +167,7 @@
 			</script>
 		</div>
 	</div>
-	<a href="javascript:void(0);" id="customLinksNavOpen" onclick="openCustomLinksNav()">☰</a> 
+	<a href="javascript:void(0);" id="customLinksNavOpen" onclick="openCustomLinksNav()">&#9776;</a> 
     <div id="custom_links_nav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeCustomLinksNav()">&#215;</a>
       <div class="random-link-wrapper" style="text-align: center;padding-bottom: 10px;">
@@ -419,6 +420,11 @@
           clearOldCanvas();
           runAnimation("matrix");
           SetCookie("animation", "matrix", 31536000000);
+        });
+        document.getElementById("classic").addEventListener("click", function () {
+          clearOldCanvas();
+          runAnimation("classic");
+          SetCookie("animation", "classic", 31536000000);
         });
       });
 //]]>
