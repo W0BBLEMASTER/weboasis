@@ -51,6 +51,8 @@ PROTO3, Attempts to reimpliment searchbar functionality.
 ✅ Rightside hamburger button fixed.
 ✅ Searchbar fixed.
 ✅ Searchbar buttons loading fixed.
+✅ Added Easter Egg!!!
+✅ Fixed chat button by redirecting to Windows93's Trollbox!
 ```
 
 ### Background Animation Fix
@@ -67,9 +69,9 @@ The following changes were made to `blogspot_theme_debug.xml` to fix this issue:
 8.  A `currentAnimationInterval` variable was added to keep track of the animation interval and clear it when a new animation is selected.
 
 ## BUGS
-- System info bugs out on various browsers.
-- Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent
+- System info bugs out on various browsers, (Cores and screensize).
+- Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent.
 - NEWS, CRYPTO, etc buttons on hamburger menu LEFT do *nothing*. 
-- Chat button leads to dead link.
-- Easter egg not functional (*yet*).
+
+
 
