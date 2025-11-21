@@ -166,7 +166,7 @@
 			</script>
 		</div>
 	</div>
-	<a href="javascript:void(0);" id="customLinksNavOpen" onclick="openCustomLinksNav()">☰</a>
+	<a href="javascript:void(0);" id="customLinksNavOpen" onclick="openCustomLinksNav()">☰</a> 
     <div id="custom_links_nav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeCustomLinksNav()">&#215;</a>
       <div class="random-link-wrapper" style="text-align: center;padding-bottom: 10px;">
@@ -202,18 +202,21 @@
     <div id="leftsidemenu"><span class="sidenavhome" onMouseOver="openNav()"><a href="javascript:void(0);" onclick="openNav()">&#9776;</a></span></div>
     <div class="weboasislogo"><img src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/logo.svg" alt="Logo"/></div>
     <div class="center-flex offset-25" id="defaultSearchModule">
-      <div class="container" id="mainContainer">
-      <div class="container container-search" id="searchContainer">
-        <input autocomplete="off" tabindex="1" type="search" id="searchBar" onfocus="handleSearchBarFocus(event);" onblur="handleSearchBarBlur(event);" onkeyup="handleQuery(event,this.value);" onsearch="handleSearchReset2(event);" />
-        <button id="searchButton">Find</button>
-      </div>
-        <div class="container container-help" id="searchHelp">
-          <div class="help-list" id="searchHelpMenu"></div>
+        <div class="container" id="mainContainer">
+            <div id="donutContainer" style="display:none; width: 100%; height: 500px;">
+                <object data="https://raw.githack.com/W0BBLEMASTER/weboasis/master/405.html" width="100%" height="100%"></object>
+            </div>
+            <div class="container container-search" id="searchContainer">
+                <input autocomplete="off" tabindex="1" type="search" id="searchBar" onfocus="handleSearchBarFocus(event);" onblur="handleSearchBarBlur(event);" onkeyup="handleQuery(event,this.value);" onsearch="handleSearchReset2(event);" />
+                <button id="searchButton">Find</button>
+            </div>
+            <div class="container container-help" id="searchHelp">
+                <div class="help-list" id="searchHelpMenu"></div>
+            </div>
+            <div class="container container-menu" id="menuContainer">
+                <ul onclick="javascript:void(0);" class="menu-category" id="categoryMenu"></ul>
+            </div>
         </div>
-        <div class="container container-menu" id="menuContainer">
-          <ul onclick="javascript:void(0);" class="menu-category" id="categoryMenu"></ul>
-        </div>
-      </div>
     </div>
     <div class="center-flex offset-26" id="linkSearchModule">
       <div class="container" id="mainContainer2">
@@ -300,6 +303,25 @@
 //<![CDATA[
       document.addEventListener("DOMContentLoaded", function () {
         init();
+
+        const donutButton = document.querySelector('.left-flex.offset-29 #switchSearch');
+        const donutContainer = document.getElementById('donutContainer');
+        const searchContainer = document.getElementById('searchContainer');
+
+        if (donutButton) {
+          donutButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            
+            if (donutContainer.style.display === 'none') {
+              donutContainer.style.display = 'block';
+              searchContainer.style.display = 'none';
+            } else {
+              donutContainer.style.display = 'none';
+              searchContainer.style.display = 'block';
+            }
+          });
+        }
       });
     //]]>
     </script>
