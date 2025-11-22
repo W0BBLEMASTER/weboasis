@@ -1,37 +1,32 @@
 
-function runRoadAnimation() {
-    var canvasContainer = document.getElementById('canvasContainer');
+(() => {
+    const container = document.getElementById('canvasContainer');
+    if (!container) return;
 
-    // Clear any existing content and animation intervals
     if (window.currentAnimationInterval) {
         clearInterval(window.currentAnimationInterval);
         window.currentAnimationInterval = null;
     }
-    if (canvasContainer) {
-        while (canvasContainer.firstChild) {
-            canvasContainer.removeChild(canvasContainer.firstChild);
-        }
-    }
+    container.innerHTML = '';
 
-    // Create the iframe
-    var iframe = document.createElement('iframe');
-    iframe.id = 'customBackgroundIframe';
-    iframe.src = 'https://itwillneverbethesame.com/';
-    iframe.frameBorder = '0';
-    iframe.allow = 'autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen; accelerometer; clipboard-write; web-share';
-    iframe.allowFullscreen = true;
-    iframe.style.position = 'fixed';
-    iframe.style.top = '0';
-    iframe.style.left = '0';
-    iframe.style.width = '100vw';
-    iframe.style.height = '100vh';
-    iframe.style.zIndex = '-1';
-    iframe.style.objectFit = 'cover';
-    iframe.style.filter = 'sepia(100%) hue-rotate(-90deg) saturate(300%)';
+    const iframe = Object.assign(document.createElement('iframe'), {
+        id: 'customBackgroundIframe',
+        src: 'https://itwillneverbethesame.com/',
+        frameBorder: '0',
+        allow: 'autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen; accelerometer; clipboard-write; web-share',
+        allowFullscreen: true,
+    });
 
-    // Append the iframe
-    if (canvasContainer) {
-        canvasContainer.appendChild(iframe);
-    }
-}
-runRoadAnimation();
+    Object.assign(iframe.style, {
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100vw',
+        height: '100vh',
+        zIndex: '-1',
+        objectFit: 'cover',
+        filter: 'sepia(100%) hue-rotate(-90deg) saturate(300%)',
+    });
+
+    container.appendChild(iframe);
+})();
