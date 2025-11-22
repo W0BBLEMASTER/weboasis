@@ -33,3 +33,4 @@ function runRoadAnimation() {
         canvasContainer.appendChild(iframe);
     }
 }
+runRoadAnimation();
