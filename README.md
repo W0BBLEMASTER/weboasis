@@ -1,6 +1,6 @@
 # Weboasis Blogspot Theme Conversion
 
-##https://wobblemaster.blogspot.com
+## https://wobblemaster.blogspot.com
 
 This document outlines the changes made to convert the static Weboasis startpage into a functional Blogspot theme.
 
@@ -74,6 +74,7 @@ The following changes were made to `blogspot_theme_debug.xml` to fix this issue:
 ## BUGS
 - System info bugs out on various browsers, (Cores and screensize).
 - Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent.
+
 
 
 
