@@ -3,13 +3,34 @@ while (t.firstChild) {
     t.removeChild(t.firstChild);
 }
 t.style.backgroundColor = "black";
-var i = document.createElement("iframe");
-i.src = "file:///C:/Users/OMNIBOX-1/Downloads/Stuff4Gemini/Antigravity_Rip/index.html";
-i.style.width = "100%";
-i.style.height = "100%";
-i.style.border = "none";
-i.style.position = "absolute";
-i.style.top = "0";
-i.style.left = "0";
-i.style.zIndex = "0";
-t.appendChild(i);
+
+// Create Video Element for the Gradient
+var v = document.createElement("video");
+// Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
+v.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/Antigravity_Rip/Dash-Gradient.mp4";
+v.autoplay = true;
+v.loop = true;
+v.muted = true;
+v.playsInline = true;
+v.style.width = "100%";
+v.style.height = "100%";
+v.style.objectFit = "cover";
+v.style.position = "absolute";
+v.style.top = "0";
+v.style.left = "0";
+v.style.zIndex = "0"; // Behind content
+
+// Create Image Element for the Agents (Overlay)
+var img = document.createElement("img");
+img.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/Antigravity_Rip/root_background-agents.png";
+img.style.width = "100%";
+img.style.height = "100%";
+img.style.objectFit = "cover";
+img.style.position = "absolute";
+img.style.top = "0";
+img.style.left = "0";
+img.style.zIndex = "1"; // On top of video, behind UI
+img.style.opacity = "0.8"; // Adjust transparency if needed
+
+t.appendChild(v);
+t.appendChild(img);
