@@ -7,7 +7,7 @@ t.style.backgroundColor = "black";
 // Create Video Element for the Gradient
 var v = document.createElement("video");
 // Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
-v.src = "Dash-Gradient.mp4";
+v.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/Dash-Gradient.mp4";
 v.autoplay = true;
 v.loop = true;
 v.muted = true;
@@ -22,7 +22,7 @@ v.style.zIndex = "0"; // Behind content
 
 // Create Image Element for the Agents (Overlay)
 var img = document.createElement("img");
-img.src = "root_background-agents.png";
+img.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/root_background-agents.png";
 img.style.width = "100%";
 img.style.height = "100%";
 img.style.objectFit = "cover";
@@ -36,7 +36,7 @@ t.appendChild(v);
 
 // Create Second Image Element for another Agents overlay
 var img2 = document.createElement("img");
-img2.src = "background-agents.png";
+img2.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/background-agents.png";
 img2.style.width = "100%";
 img2.style.height = "100%";
 img2.style.objectFit = "cover";
