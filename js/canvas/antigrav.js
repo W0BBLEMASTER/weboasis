@@ -7,7 +7,7 @@ t.style.backgroundColor = "black";
 // Create Video Element for the Gradient
 var v = document.createElement("video");
 // Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
-v.src = "../../Antigravity_Rip/Dash-Gradient.mp4";
+v.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/Dash-Gradient.mp4";
 v.autoplay = true;
 v.loop = true;
 v.muted = true;
