@@ -143,8 +143,8 @@
                 <p id="nodes" class="btn hollow small animationBtn">Nodes</p>
 				<span id="gradient" class="btn hollow small animationBtn">Gradient</span>
                 <p id="circuits" class="btn hollow small animationBtn">Circuits</p>
-                <p id="classic" class="btn hollow small animationBtn">Classic</p>
-                <span id="matrix" class="btn hollow small reset animationBtn">Reset Animation</span>
+                <span id="classic" class="btn hollow small animationBtn">Classic</span>
+                <p id="matrix" class="btn hollow small reset animationBtn">Reset Animation</p>
             </div>
         </div>
         <div id="customBackgrounds">
