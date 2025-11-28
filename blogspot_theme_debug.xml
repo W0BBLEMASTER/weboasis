@@ -53,6 +53,33 @@
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/keyscroll.min.js"></script>
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/suggestions.min.js"></script>
 	<script type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/alerts/toastify.min.js"></script>
+    <script type="application/javascript">
+//<![CDATA[
+var t = document.getElementById("canvasContainer");
+while (t.firstChild) {
+    t.removeChild(t.firstChild);
+}
+t.style.backgroundColor = "black";
+
+// Create Video Element for the Gradient
+var v = document.createElement("video");
+// Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
+v.src = "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/Dash-Gradient.mp4";
+v.autoplay = true;
+v.loop = true;
+v.muted = true;
+v.playsInline = true;
+v.style.width = "100%";
+v.style.height = "100%";
+v.style.objectFit = "cover";
+v.style.position = "absolute";
+v.style.top = "0";
+v.style.left = "0";
+v.style.zIndex = "0"; // Behind content
+
+t.appendChild(v);
+//]]>
+    </script>
   </head>
   <body id="body" onresize="canvasApp()">
     <div class="background" id="canvasContainer"></div>
@@ -144,7 +171,8 @@
 				<span id="gradient" class="btn hollow small animationBtn">Gradient</span>
                 <p id="circuits" class="btn hollow small animationBtn">Circuits</p>
                 <span id="classic" class="btn hollow small animationBtn">Classic</span>
-                <p id="matrix" class="btn hollow small reset animationBtn">Reset Animation</p>
+                <p id="antigrav" class="btn hollow small">Antigrav</p>
+                <span id="matrix" class="btn hollow small reset animationBtn">Reset Animation</span>
             </div>
         </div>
         <div id="customBackgrounds">
@@ -366,7 +394,7 @@
 
         function runAnimation(animationName) {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/" + animationName + ".js");
+            xhr.open("GET", "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/" + animationName + ".js");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     try {
@@ -425,6 +453,11 @@
           clearOldCanvas();
           runAnimation("classic");
           SetCookie("animation", "classic", 31536000000);
+        });
+        document.getElementById("antigrav").addEventListener("click", function () {
+          clearOldCanvas();
+          runAnimation("antigrav");
+          SetCookie("animation", "antigrav", 31536000000);
         });
       });
 //]]>
