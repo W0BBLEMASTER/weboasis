@@ -59,28 +59,28 @@
     <div id="mySidenav" class="sidenav" onMouseLeave="closeNav()">
         <a href="javascript:void(0);" class="closebtn" onclick="closeNav()">&#215;</a>
         <menu>
-            <a href='#'>News</a>
-            <a href='#'>Tech</a>
-            <a href='#'>Twitter</a>
-            <a href='#'>Crypto</a>
-            <a href='#'>Stocks</a>
-            <a href='#'>Convert</a>
-            <a href='#'>Weather</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/news/index.html'>News</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/tech/index.html'>Tech</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/twitter/index.html'>Twitter</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/crypto/index.html'>Crypto</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/stocks/index.html'>Stocks</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/convert/index.html'>Convert</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/weather/index.html'>Weather</a>
             <a href='https://g0.si'>ShortURL</a>
-            <a href='#'>Editors</a>
-            <a href='#'>Magnet</a>
-            <a href='#'>Stream</a>
-            <a href='#'>Arcade</a>
-            <a href='#'>Upload</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/editors/index.html'>Editors</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/magnet/magnet/index.html'>Magnet</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/stream/index.html'>Stream</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/arcade/index.html'>Arcade</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/upload/index.html'>Upload</a>
             <a href='#'>Image</a>
 			<a href='http://streamwat.ch/radio/'>Radio</a>
 			<a href='#'>Forum</a>
-            <a href='https://chatte.rs'>Chat</a>
+            <a href='https://www.windows93.net/#!trollbox'>Chat</a>
 			<a href='http://streamwat.ch'>Live</a>
-			<a href='#'>Todo</a>
-			<a href='#'>Text</a>
-            <a href='#'>FAQ</a>
-            <a href='#'>QR</a>
+			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/todo/index.html'>Todo</a>
+			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/text/index.html'>Text</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/faq/index.html'>FAQ</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/qr/index.html'>QR</a>
         </menu><hr/>
         <div id="customcontainer">
             <div id="show-hide-customization">
@@ -143,7 +143,8 @@
                 <p id="nodes" class="btn hollow small animationBtn">Nodes</p>
 				<span id="gradient" class="btn hollow small animationBtn">Gradient</span>
                 <p id="circuits" class="btn hollow small animationBtn">Circuits</p>
-                <span id="matrix" class="btn hollow small reset animationBtn">Reset Animation</span>
+                <span id="classic" class="btn hollow small animationBtn">Classic</span>
+                <p id="matrix" class="btn hollow small reset animationBtn">Reset Animation</p>
             </div>
         </div>
         <div id="customBackgrounds">
@@ -166,7 +167,7 @@
 			</script>
 		</div>
 	</div>
-	<a href="javascript:void(0);" id="customLinksNavOpen" onclick="openCustomLinksNav()">☰</a>
+	<a href="javascript:void(0);" id="customLinksNavOpen" onclick="openCustomLinksNav()">&#9776;</a> 
     <div id="custom_links_nav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeCustomLinksNav()">&#215;</a>
       <div class="random-link-wrapper" style="text-align: center;padding-bottom: 10px;">
@@ -202,18 +203,21 @@
     <div id="leftsidemenu"><span class="sidenavhome" onMouseOver="openNav()"><a href="javascript:void(0);" onclick="openNav()">&#9776;</a></span></div>
     <div class="weboasislogo"><img src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/logo.svg" alt="Logo"/></div>
     <div class="center-flex offset-25" id="defaultSearchModule">
-      <div class="container" id="mainContainer">
-      <div class="container container-search" id="searchContainer">
-        <input autocomplete="off" tabindex="1" type="search" id="searchBar" onfocus="handleSearchBarFocus(event);" onblur="handleSearchBarBlur(event);" onkeyup="handleQuery(event,this.value);" onsearch="handleSearchReset2(event);" />
-        <button id="searchButton">Find</button>
-      </div>
-        <div class="container container-help" id="searchHelp">
-          <div class="help-list" id="searchHelpMenu"></div>
+        <div class="container" id="mainContainer">
+            <div id="donutContainer" style="display:none; width: 100%; height: 500px;">
+                <object data="https://raw.githack.com/W0BBLEMASTER/weboasis/master/405.html" width="100%" height="100%"></object>
+            </div>
+            <div class="container container-search" id="searchContainer">
+                <input autocomplete="off" tabindex="1" type="search" id="searchBar" onfocus="handleSearchBarFocus(event);" onblur="handleSearchBarBlur(event);" onkeyup="handleQuery(event,this.value);" onsearch="handleSearchReset2(event);" />
+                <button id="searchButton">Find</button>
+            </div>
+            <div class="container container-help" id="searchHelp">
+                <div class="help-list" id="searchHelpMenu"></div>
+            </div>
+            <div class="container container-menu" id="menuContainer">
+                <ul onclick="javascript:void(0);" class="menu-category" id="categoryMenu"></ul>
+            </div>
         </div>
-        <div class="container container-menu" id="menuContainer">
-          <ul onclick="javascript:void(0);" class="menu-category" id="categoryMenu"></ul>
-        </div>
-      </div>
     </div>
     <div class="center-flex offset-26" id="linkSearchModule">
       <div class="container" id="mainContainer2">
@@ -294,12 +298,31 @@
       <div id="secretList"></div>
     </div>
     <div id="chatContainer">
-      <a href="https://chatte.rs" target="_blank" id="chat"></a>
+      <a href="https://www.windows93.net/#!trollbox" target="_blank" id="chat"></a>
     </div>
     <script type="text/javascript" language="javascript">
 //<![CDATA[
       document.addEventListener("DOMContentLoaded", function () {
         init();
+
+        const donutButton = document.querySelector('.left-flex.offset-29 #switchSearch');
+        const donutContainer = document.getElementById('donutContainer');
+        const searchContainer = document.getElementById('searchContainer');
+
+        if (donutButton) {
+          donutButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            
+            if (donutContainer.style.display === 'none') {
+              donutContainer.style.display = 'block';
+              searchContainer.style.display = 'none';
+            } else {
+              donutContainer.style.display = 'none';
+              searchContainer.style.display = 'block';
+            }
+          });
+        }
       });
     //]]>
     </script>
@@ -308,7 +331,7 @@
         Toastify({
           text: "RIP Webby 1992-2022",
           duration: 15000,
-          destination: "https://github.com/apvarun/toastify-js",
+          destination: "https://archive.is/wLUbS",
           newWindow: true,
           gravity: "bottom",
           position: "center",
@@ -397,6 +420,11 @@
           clearOldCanvas();
           runAnimation("matrix");
           SetCookie("animation", "matrix", 31536000000);
+        });
+        document.getElementById("classic").addEventListener("click", function () {
+          clearOldCanvas();
+          runAnimation("classic");
+          SetCookie("animation", "classic", 31536000000);
         });
       });
 //]]>
