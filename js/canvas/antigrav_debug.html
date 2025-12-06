@@ -34,6 +34,7 @@
 <link rel="stylesheet" href="styles-2LNYZVJP.css"></head>
 
 <body>
+  <div id="canvasContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
   <script>
     window.dataLayer = window.dataLayer || [];
 
@@ -58,42 +59,29 @@
   <script src="https://www.gstatic.com/glue/cookienotificationbar/cookienotificationbar.min.js" data-glue-cookie-notification-bar-category="2A" data-glue-cookie-notification-bar-language="" data-glue-cookie-notification-bar-site-id="">
   </script>
 <link rel="modulepreload" href="chunk-E6TGZIGP.js"><script src="antigrav_debug.js" type="module"></script>
-  <!-- Mouse tracking script -->
+  <!-- Local Mouse tracking script -->
   <script type="module">
-    async function fetchMouseCoordinates() {
-      try {
-        const response = await fetch('http://localhost:8000/mouse_coords');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        if (window.updateExternalMouse) {
-          const screenWidth = window.innerWidth;
-          const screenHeight = window.innerHeight;
+    document.addEventListener('mousemove', (event) => {
+      if (window.updateExternalMouse) {
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
 
-          // Convert pixel coordinates to normalized device coordinates (NDC) range of -1 to 1
-          // And then scale to the scene's expected range (e.g., -0.175 to 0.175).
-          // Adjust these scaling factors as needed for the specific scene.
-          const normalizedX = (data.x / screenWidth) * 2 - 1; // -1 to 1
-          const normalizedY = -(data.y / screenHeight) * 2 + 1; // -1 to 1 (Y-axis inverted for web context)
+        const dataX = event.clientX;
+        const dataY = event.clientY;
 
-          const sceneScaleFactor = 0.175; // Based on original JS code this.scene.intersectionPoint.x*.175
-          const sceneScaledX = normalizedX * sceneScaleFactor;
-          const sceneScaledY = normalizedY * sceneScaleFactor;
+        // Convert pixel coordinates to normalized device coordinates (NDC) range of -1 to 1
+        // And then scale to the scene's expected range (e.g., -0.175 to 0.175).
+        // Adjust these scaling factors as needed for the specific scene.
+        const normalizedX = (dataX / screenWidth) * 2 - 1; // -1 to 1
+        const normalizedY = -(dataY / screenHeight) * 2 + 1; // -1 to 1 (Y-axis inverted for web context)
 
-          window.updateExternalMouse(sceneScaledX, sceneScaledY, true); // Assuming hovering when fetching
-        }
-      } catch (error) {
-        console.error('Error fetching mouse coordinates:', error);
-        if (window.externalMouseInput) {
-          window.externalMouseInput.isControlled = false;
-        }
+        const sceneScaleFactor = 0.175; // Based on original JS code this.scene.intersectionPoint.x*.175
+        const sceneScaledX = normalizedX * sceneScaleFactor;
+        const sceneScaledY = normalizedY * sceneScaleFactor;
+
+        window.updateExternalMouse(sceneScaledX, sceneScaledY, true); // Assuming hovering when fetching
       }
-    }
-
-    const pollingInterval = 50; 
-    setInterval(fetchMouseCoordinates, pollingInterval);
+    });
   </script>
 </body>
 
