@@ -4378,11 +4378,14 @@ void main() {
                     #endif
 
                 }
-            `,transparent:!0,depthTest:!1,depthWrite:!1}),this.mesh=new qd(t,this.renderMaterial),this.mesh.position.set(0,0,0),this.mesh.scale.set(5,-5,5),this.scene.scene.add(this.mesh)}resize(){this.renderMaterial.uniforms.uRez.value=new Wt(this.scene.renderer.domElement.width,this.scene.renderer.domElement.height),this.renderMaterial.uniforms.uPixelRatio.value=this.scene.pixelRatio,this.renderMaterial.needsUpdate=!0}update(){let e=this.scene.clock.getElapsedTime()-this.lastTime;this.lastTime=this.scene.clock.getElapsedTime();if (window.externalMouseInput.isControlled) {
+            `,transparent:!0,depthTest:!1,depthWrite:!1}),this.mesh=new qd(t,this.renderMaterial),this.mesh.position.set(0,0,0),this.mesh.scale.set(5,-5,5),this.scene.scene.add(this.mesh)}resize(){this.renderMaterial.uniforms.uRez.value=new Wt(this.scene.renderer.domElement.width,this.scene.renderer.domElement.height),this.renderMaterial.uniforms.uPixelRatio.value=this.scene.pixelRatio,this.renderMaterial.needsUpdate=!0}
+update(){let e=this.scene.clock.getElapsedTime()-this.lastTime;this.lastTime=this.scene.clock.getElapsedTime();
+if (window.externalMouseInput && window.externalMouseInput.isControlled) {
         this.mousePos.set(window.externalMouseInput.x, window.externalMouseInput.y);
     } else {
         this.scene.isIntersecting?this.mousePos.set(this.scene.intersectionPoint.x*.175,this.scene.intersectionPoint.y*.175):this.mousePos.set(this.scene.intersectionPoint.x*.175,this.scene.intersectionPoint.y*.175)
-    };this.particleScale=this.scene.renderer.domElement.width/this.scene.pixelRatio/2e3*this.scene.particlesScale,this.simMaterial.uniforms.uPosition.value=this.everRendered?this.rt1.texture:this.posTex,this.simMaterial.uniforms.uTime.value=this.scene.clock.getElapsedTime(),this.simMaterial.uniforms.uDeltaTime.value=e,this.simMaterial.uniforms.uRingRadius.value=.175+Math.sin(this.scene.time*1)*.03+Math.cos(this.scene.time*3)*.02,this.simMaterial.uniforms.uMousePos.value=this.mousePos,this.simMaterial.uniforms.uRingWidth.value=this.scene.ringWidth,this.simMaterial.uniforms.uRingWidth2.value=this.scene.ringWidth2,this.simMaterial.uniforms.uRingDisplacement.value=this.scene.ringDisplacement;if (window.externalMouseInput.isControlled) {
+    };this.particleScale=this.scene.renderer.domElement.width/this.scene.pixelRatio/2e3*this.scene.particlesScale,this.simMaterial.uniforms.uPosition.value=this.everRendered?this.rt1.texture:this.posTex,this.simMaterial.uniforms.uTime.value=this.scene.clock.getElapsedTime(),this.simMaterial.uniforms.uDeltaTime.value=e,this.simMaterial.uniforms.uRingRadius.value=.175+Math.sin(this.scene.time*1)*.03+Math.cos(this.scene.time*3)*.02,this.simMaterial.uniforms.uMousePos.value=this.mousePos,this.simMaterial.uniforms.uRingWidth.value=this.scene.ringWidth,this.simMaterial.uniforms.uRingWidth2.value=this.scene.ringWidth2,this.simMaterial.uniforms.uRingDisplacement.value=this.scene.ringDisplacement;
+if (window.externalMouseInput && window.externalMouseInput.isControlled) {
         this.simMaterial.uniforms.uIsHovering.value = window.externalMouseInput.isHovering ? 1 : 0;
     } else {
         this.simMaterial.uniforms.uIsHovering.value=this.scene.hoverProgress
