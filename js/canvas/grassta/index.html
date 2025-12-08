@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GRASSTA Build 1</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: black; }
+        canvas { display: block; }
+        #youtube-audio { display: none; } /* Hide the iframe */
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div id="youtube-audio"></div>
+
+    <script src="grassta.js"></script>
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-audio', {
+                height: '0',
+                width: '0',
+                videoId: 'vY6B8uj1plY',
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.mute(); // Mute the audio
+            event.target.playVideo(); // Autoplay the video
+        }
+
+        // Initialize the canvas and matrix effect - assuming grassta.js handles this
+        // If grassta.js doesn't have an init function, we might need to add it here.
+        // For now, assume grassta.js will use "matrixCanvas" directly.
+    </script>
+</body>
+</html>
