@@ -393,6 +393,55 @@ t.appendChild(v);
         }
 
         function runAnimation(animationName) {
+            clearOldCanvas(); // Ensure canvas is cleared before new animation
+
+            if (animationName === "antigrav") {
+                let t = document.getElementById("canvasContainer");
+                if (t) {
+                    // Inject the structural HTML expected by the angular/webgl app
+                    t.innerHTML = '<main><app-root></app-root></main>';
+
+                    // Inject antigrav_debug.js as a module script
+                    // IMPORTANT: Uses raw.githack.com to bypass potential CDN caching of the broken file
+                    // Ensure the FIXED antigrav_debug.js is uploaded to the repo
+                    let scriptAntigrav = document.createElement("script");
+                    scriptAntigrav.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/antigrav_debug.js?t=" + new Date().getTime();
+                    scriptAntigrav.type = "module";
+                    document.body.appendChild(scriptAntigrav);
+
+                    // Inject the local mouse tracking script as a module script
+                    let scriptMouse = document.createElement("script");
+                    scriptMouse.type = "module";
+                    scriptMouse.textContent = `
+                        document.addEventListener('mousemove', (event) => {
+                            if (window.updateExternalMouse) {
+                                const screenWidth = window.innerWidth;
+                                const screenHeight = window.innerHeight;
+
+                                const dataX = event.clientX;
+                                const dataY = event.clientY;
+
+                                // Convert pixel coordinates to normalized device coordinates (NDC) range of -1 to 1
+                                // And then scale to the scene's expected range (e.g., -0.175 to 0.175).
+                                // Adjust these scaling factors as needed for the specific scene.
+                                const normalizedX = (dataX / screenWidth) * 2 - 1; // -1 to 1
+                                const normalizedY = -(dataY / screenHeight) * 2 + 1; // -1 to 1 (Y-axis inverted for web context)
+
+                                const sceneScaleFactor = 0.175; // Based on original JS code this.scene.intersectionPoint.x*.175
+                                const sceneScaledX = normalizedX * sceneScaleFactor;
+                                const sceneScaledY = normalizedY * sceneScaleFactor;
+
+                                window.updateExternalMouse(sceneScaledX, sceneScaledY, true); // Assuming hovering when fetching
+                            }
+                        });
+                    `;
+                    document.body.appendChild(scriptMouse);
+                } else {
+                    console.error("canvasContainer not found for antigrav direct injection.");
+                }
+                return; // Exit as antigrav is handled
+            }
+
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/" + animationName + ".js");
             xhr.onreadystatechange = function() {
