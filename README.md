@@ -47,30 +47,9 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 ## DEBUG/BUGFIXES
 
 ```
-PROTO3, Attempts to reimpliment searchbar functionality.
-✅ The primary bug concerning assets (CSS, JavaScript, images) not loading due to incorrect MIME types when linked from `raw.githubusercontent.com` has been resolved by switching to `jsDelivr` as a CDN.
-✅ Background animations now load correctly.
-✅ Rightside hamburger button fixed.
-✅ Searchbar fixed.
-✅ Searchbar buttons loading fixed.
-✅ Added Easter Egg!!!
-✅ Fixed chat button by redirecting to Windows93's Trollbox!
-✅ Fixed hamburger menu links by pointing to the correct index.html files on the weboasis github repo via raw.githack.com.
+
+✅ MORE COMING SOON. PLANS TO SWITCH FULLY TO GITHACK, AND MUCH MORE.
 ```
-
-### Background Animation Fix
-The background animations were not loading correctly in the Blogspot theme. The issue was that the original code used dynamic script injection to load the animation scripts, which is blocked by Blogspot's Content Security Policy.
-
-The following changes were made to `blogspot_theme_debug.xml` to fix this issue:
-1.  A new script block was added at the end of the `<body>`.
-2.  Inside this script block, a new function `runAnimation(animationName)` was defined. This function fetches the content of the selected animation script using `XMLHttpRequest` and executes it using `eval()`.
-3.  A new `clearOldCanvas()` function was defined to clear the canvas before loading a new animation.
-4.  The original `canvasApp()` function was overridden to prevent it from interfering with the new animation logic.
-5.  The event listeners for the animation buttons were modified to call `clearOldCanvas()` and `runAnimation(animationName)`, and to set a cookie to remember the selected animation.
-6.  The page reload logic was removed from the event listeners.
-7.  The logic to load the animation from the cookie on page load was added.
-8.  A `currentAnimationInterval` variable was added to keep track of the animation interval and clear it when a new animation is selected.
-
 ## BUGS
 - System info bugs out on various browsers, (Cores and screensize).
 - Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent.
