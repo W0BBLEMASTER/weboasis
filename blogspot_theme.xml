@@ -53,6 +53,33 @@
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/keyscroll.min.js"></script>
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/suggestions.min.js"></script>
 	<script type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/alerts/toastify.min.js"></script>
+    <script type="application/javascript">
+//<![CDATA[
+var t = document.getElementById("canvasContainer");
+while (t.firstChild) {
+    t.removeChild(t.firstChild);
+}
+t.style.backgroundColor = "black";
+
+// Create Video Element for the Gradient
+var v = document.createElement("video");
+// Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
+v.src = "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/Dash-Gradient.mp4";
+v.autoplay = true;
+v.loop = true;
+v.muted = true;
+v.playsInline = true;
+v.style.width = "100%";
+v.style.height = "100%";
+v.style.objectFit = "cover";
+v.style.position = "absolute";
+v.style.top = "0";
+v.style.left = "0";
+v.style.zIndex = "0"; // Behind content
+
+t.appendChild(v);
+//]]>
+    </script>
   </head>
   <body id="body" onresize="canvasApp()">
     <div class="background" id="canvasContainer"></div>
@@ -144,7 +171,12 @@
 				<span id="gradient" class="btn hollow small animationBtn">Gradient</span>
                 <p id="circuits" class="btn hollow small animationBtn">Circuits</p>
                 <span id="classic" class="btn hollow small animationBtn">Classic</span>
+                <p id="antigrav" class="btn hollow small">Antigrav</p>
+				<span id="grassta" class="btn hollow small animationBtn" onclick="runAnimation('grassta')">Grassta</span>
+                <p id="horses" class="btn hollow small animationBtn">Horses</p>
+				<span id="very" class="btn hollow small animationBtn">4U</span>
                 <p id="matrix" class="btn hollow small reset animationBtn">Reset Animation</p>
+                
             </div>
         </div>
         <div id="customBackgrounds">
@@ -365,8 +397,233 @@
         }
 
         function runAnimation(animationName) {
+            clearOldCanvas(); // Ensure canvas is cleared before new animation
+
+            if (animationName === "very") {
+                console.log("[Very] Starting animation load sequence...");
+                let t = document.getElementById("canvasContainer");
+                if (t) {
+                    t.innerHTML = '<canvas id="canvas" style="width:100%; height:100%;"></canvas>';
+                    
+                    var ts = new Date().getTime();
+                    
+                    var script1 = document.createElement("script");
+                    script1.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/very/libs.min.js?t=" + ts;
+                    script1.onload = function() {
+                        console.log("[Very] libs.min.js loaded.");
+                        var script2 = document.createElement("script");
+                        script2.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/very/Util.js?t=" + ts;
+                        script2.onload = function() {
+                            console.log("[Very] Util.js loaded.");
+                            var script3 = document.createElement("script");
+                            script3.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/very/Piece.js?t=" + ts;
+                            script3.onload = function() {
+                                console.log("[POC4] Piece.js loaded. Initializing Full Path Fill...");
+                                try {
+                                    // POC 4: Full Path + Scale + Position
+                                    if (window.Piece) {
+                                        window.Piece.prototype.start = function() {
+                                            BasePiece.prototype.start.apply(this);
+                                            const cfg = this.config;
+                                            this.shape = this.stage.addChild(new createjs.Shape());
+                                            try {
+                                                // FULL PATH
+                                                var p = "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";
+                                                this.shape.graphics.f("#FFFFFF").p(p);
+                                                // Debug4 Fixes
+                                                this.shape.scaleX = 3.5; 
+                                                this.shape.scaleY = 3.5;
+                                                this.shape.x = cfg.text.position.x - 800;
+                                                this.shape.y = cfg.text.position.y - 400;
+                                            } catch(e) {
+                                                console.error("POC4 Path Error:", e);
+                                                this.shape.graphics.f("#FFFFFF").drawRect(0,0,100,100);
+                                            }
+                                        };
+                                        // ... addDrop ...
+                                        window.Piece.prototype.addDrop = function() {
+                                            // ... (Safe implementation from before) ...
+                                            const cfgd = this.config.drop, cfgo = this.config.oval;
+                                            const w = this.width, h = this.height, w2 = w/2, h2 = h/2;
+                                            const drop = this.stage.addChild(new createjs.Container());
+                                            const t = Math.random();
+                                            const scaleMax = cfgd.scaleRange[1] / MathUtil.lerpInv(cfgd.yRange[0], h2, cfgd.yRange[1]);
+                                            drop.x = RandomUtil.between(-w2, w2);
+                                            drop.y = MathUtil.lerp(cfgd.yRange[0], h2, t);
+                                            const scale = MathUtil.lerp(cfgd.scaleRange[0], scaleMax, t) * RandomUtil.between.apply(null, cfgd.scaleVariability);
+                                            drop.scaleX = drop.scaleY = scale;
+                                            drop.shape = drop.addChild(new createjs.Shape());
+                                            try { drop.shape.graphics.f("#ffffff").p(cfgd.path); } catch(e) {}
+                                            drop.shape.y = cfgd.y[0];
+                                            createjs.Tween.get(drop.shape)
+                                            .to({y:cfgd.y[1]}, cfgd.duration, cfgd.ease)
+                                            .call(function() { try { drop.shape.graphics.c().s("#ffffff").ss(cfgo.weight).p(cfgo.path); } catch(e) {} })
+                                            .to({y:0, scaleX:cfgo.scale[0], scaleY:cfgo.scale[0], alpha:cfgo.alpha[0]}, 0)
+                                            .to({scaleX:cfgo.scale[1], scaleY:cfgo.scale[1], alpha:cfgo.alpha[1]}, cfgo.duration, cfgo.ease)
+                                            .call(function() { drop.parent.removeChild(drop); });    
+                                        };
+                                    }
+
+                                    var config = {
+                                        debug: false,
+                                        framerate: 60,
+                                        backgroundColor: '#000',
+                                        originalSize: [1920, 1080],
+                                        scaleByRatio: [.54,1.65, .86,1.3, 1,1, 2,1],
+                                        drop: {
+                                            chance: .0094,
+                                            yRange: [57, 194],
+                                            scaleRange: [.3, 2],
+                                            scaleVariability: [.7, 1.5],
+                                            path: "AgRAbQgIgIAAgKQAAgJALgLQAMgLACgMQACAMAMALQAMALAAAJQAAAKgIAIQgIAIgKAAQgKAAgHgIg",
+                                            y: [-634, -17],
+                                            duration: 840,
+                                            ease: createjs.Ease.linear
+                                        },
+                                        oval: {
+                                            path: "AH3hsQDRAtAAA/QAABAjRAsQjQAtknAAQkmAAjRgtQjQgsAAhAQAAg/DQgtQDRgsEmAAQEnAADQAsg",
+                                            weight: 1,
+                                            scale: [.05, 1],
+                                            alpha: [1, 0],
+                                            duration: 1560,
+                                            ease: createjs.Ease.linear
+                                        },
+                                        text: {
+                                            position: {x: 960, y: 540},
+                                            path: "" // Ignored
+                                        },
+                                        sounds: []
+                                    };
+                                    window.init("canvas", window.Piece, config);
+                                    console.log("[POC4] Init called.");
+                                } catch (e) { console.error("[POC4] Error:", e); }
+                            };
+                            script3.onerror = function(e) { console.error("[Very] Failed to load Piece.js", e); };
+                            document.body.appendChild(script3);
+                        };
+                        script2.onerror = function(e) { console.error("[Very] Failed to load Util.js", e); };
+                        document.body.appendChild(script2);
+                    };
+                    script1.onerror = function(e) { console.error("[Very] Failed to load libs.min.js", e); };
+                    document.body.appendChild(script1);
+                }
+                return;
+            }
+
+            if (animationName === "antigrav") {
+                let t = document.getElementById("canvasContainer");
+                if (t) {
+                    // Inject the structural HTML expected by the angular/webgl app
+                    t.innerHTML = '<main><app-root></app-root></main>';
+
+                    // Inject antigrav.js as a module script
+                    // IMPORTANT: Uses raw.githack.com to bypass potential CDN caching of the broken file
+                    // Ensure the FIXED antigrav.js is uploaded to the repo
+                    let scriptAntigrav = document.createElement("script");
+                    scriptAntigrav.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/antigrav/antigrav.js?t=" + new Date().getTime();
+                    scriptAntigrav.type = "module";
+                    document.body.appendChild(scriptAntigrav);
+
+                    // Inject the local mouse tracking script as a module script
+                    let scriptMouse = document.createElement("script");
+                    scriptMouse.type = "module";
+                    scriptMouse.textContent = `
+                        document.addEventListener('mousemove', (event) => {
+                            if (window.updateExternalMouse) {
+                                const screenWidth = window.innerWidth;
+                                const screenHeight = window.innerHeight;
+
+                                const dataX = event.clientX;
+                                const dataY = event.clientY;
+
+                                // Convert pixel coordinates to normalized device coordinates (NDC) range of -1 to 1
+                                // And then scale to the scene's expected range (e.g., -0.175 to 0.175).
+                                // Adjust these scaling factors as needed for the specific scene.
+                                const normalizedX = (dataX / screenWidth) * 2 - 1; // -1 to 1
+                                const normalizedY = -(dataY / screenHeight) * 2 + 1; // -1 to 1 (Y-axis inverted for web context)
+
+                                const sceneScaleFactor = 0.175; // Based on original JS code this.scene.intersectionPoint.x*.175
+                                const sceneScaledX = normalizedX * sceneScaleFactor;
+                                const sceneScaledY = normalizedY * sceneScaleFactor;
+
+                                window.updateExternalMouse(sceneScaledX, sceneScaledY, true); // Assuming hovering when fetching
+                            }
+                        });
+                    `;
+                    document.body.appendChild(scriptMouse);
+                } else {
+                    console.error("canvasContainer not found for antigrav direct injection.");
+                }
+                return; // Exit as antigrav is handled
+            }
+
+            else if (animationName === "grassta") {
+                clearOldCanvas();
+                let t = document.getElementById("canvasContainer");
+                if (t) {
+                    // Create canvas element
+                    t.innerHTML = '<canvas id="matrixCanvas"></canvas>'; 
+                    
+                    // Create youtube-audio div
+                    var youtubeAudioDiv = document.createElement("div");
+                    youtubeAudioDiv.id = "youtube-audio";
+                    youtubeAudioDiv.style.display = "none";
+                    document.body.appendChild(youtubeAudioDiv);
+
+                    // YouTube iframe API loading (global, if not already loaded)
+                    if (!window.YT) { // Check if YouTube API is already loaded
+                        var tag = document.createElement('script');
+                        tag.src = "https://www.youtube.com/iframe_api";
+                        var firstScriptTag = document.getElementsByTagName('script')[0];
+                        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                    }
+
+                    // Define global YouTube API callback and player
+                    window.player; // Declare global player object
+                    window.onYouTubeIframeAPIReady = function() {
+                        window.player = new YT.Player('youtube-audio', {
+                            height: '0',
+                            width: '0',
+                            videoId: 'vY6B8uj1plY',
+                            events: {
+                                'onReady': window.onPlayerReady // Use the global onPlayerReady
+                            }
+                        });
+                    };
+
+                    window.onPlayerReady = function(event) {
+                        event.target.mute();
+                        event.target.playVideo();
+                    };
+
+                    // Load grassta.js from Githack for POC2 - CORRECTED URL
+                    var grasstaScript = document.createElement("script");
+                    grasstaScript.type = "text/javascript";
+                    grasstaScript.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/grassta/grassta.js"; // Githack URL for POC2
+                    grasstaScript.onload = function() {
+                        // After grassta.js loads and executes canvasApp,
+                        // potentially handle resizing or other post-load logic if needed.
+                        // For now, canvasApp should be self-executing within grassta.js
+                        // and correctly target 'matrixCanvas'.
+                        // No explicit call to canvasApp() here, as it's assumed to be self-executing.
+                    };
+                    document.body.appendChild(grasstaScript);
+                }
+                return;
+            }
+
+            else if (animationName === "horses") {
+                // HORSES ROULETTE LOGIC
+                clearOldCanvas();
+                let scriptHorses = document.createElement("script");
+                scriptHorses.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/horses/horses.js?t=" + new Date().getTime();
+                scriptHorses.type = "text/javascript";
+                document.body.appendChild(scriptHorses);
+                return;
+            }
+
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/" + animationName + ".js");
+            xhr.open("GET", "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/" + animationName + ".js");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     try {
@@ -425,6 +682,21 @@
           clearOldCanvas();
           runAnimation("classic");
           SetCookie("animation", "classic", 31536000000);
+        });
+        document.getElementById("antigrav").addEventListener("click", function () {
+          clearOldCanvas();
+          runAnimation("antigrav");
+          SetCookie("animation", "antigrav", 31536000000);
+        });
+        document.getElementById("very").addEventListener("click", function () {
+          clearOldCanvas();
+          runAnimation("very");
+          SetCookie("animation", "very", 31536000000);
+        });
+        document.getElementById("horses").addEventListener("click", function () {
+          clearOldCanvas();
+          runAnimation("horses");
+          SetCookie("animation", "horses", 31536000000);
         });
       });
 //]]>
