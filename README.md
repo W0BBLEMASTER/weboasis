@@ -43,6 +43,18 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 3.  Navigate to "Theme" -> "Edit HTML".
 4.  Paste the content into the editor and save.
 
+### CRITICAL CONFIGURATION (Mobile View Fix)
+
+**IMPORTANT:** By default, Blogger will force a "Mobile Theme" on mobile devices, which will result in an empty page or "No Posts" error because this theme does not have a separate mobile definition. You **MUST** manually disable this in the settings.
+
+1.  Go to your Blogger Dashboard.
+2.  Navigate to **Theme**.
+3.  Click the **Gear Icon** (Mobile Settings) next to the "Mobile" preview (or under the "Customize" button).
+4.  Select **"Desktop"** (Do you want to show Desktop or Mobile theme on mobile devices? -> **Desktop**).
+5.  Click **Save**.
+
+*Note: This setting cannot be forced via the XML theme file alone. It is a server-side switch that must be toggled manually.*
+
 ---
 ## DEBUG/BUGFIXES
 
@@ -52,8 +64,3 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 ```
 ## BUGS
 - System info bugs out on various browsers, (Cores and screensize).
-- Mobile site leads to BlogSpot empty theme default, possibly due to UserAgent.
-
-
-
-
