@@ -55,6 +55,23 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 
 *Note: This setting cannot be forced via the XML theme file alone. It is a server-side switch that must be toggled manually.*
 
+## PROTO8 LATEST UPDATES (DEC 2025)
+### 1. CORE SYSTEM FIXES
+- **The "Unloader" Logic (debug.xml):** Implemented conditional rendering to deload the dashboard UI on sub-pages (About, Sitemap, News). This prevents CSS/JS leakage and allows sub-apps to run in a pure environment.
+- **Menu Integration:** Added a hard-coded ABOUT/CHANGELOG button to the sidebar.
+- **Background Video Fix:** Fixed canvasContainer looping and sizing issues within the Blogspot environment.
+
+### 2. MONOLITH ARCHITECTURE (POC)
+Created three distinct methods for hosting sub-apps (About/News) to bypass Blogspot limitations:
+- **POC 1 (The Monolith):** A single 1.8MB HTML file with every byte of CSS/JS baked in using Python. Zero external dependencies. Failed Cherrypick.
+- **POC 2 (The Hybrid):** Absolute CDN links pointing to GitHub assets with a Glassmorphism UI overlay. Failed Cherrypick
+- **POC 3 (Webby Tribute):** A static, neon-glitch aesthetic page for core information. Passed Cherrypick!
+
+### 3. SITEMAP & DISCOVERABILITY
+- **Visual Sitemap:** Integrated a Matrix-themed HTML sitemap (sitemap.html) for user navigation.
+- **Robots.txt:** Custom rules pointing bots directly to the GitHub-hosted XML sitemap via Githack.
+- **Authority Loop:** Redirects and internal linking established to trick search engines into treating GitHub and Blogspot as a single high-trust entity.
+
 ---
 ## DEBUG/BUGFIXES
 
@@ -64,3 +81,7 @@ A new file, `blogspot_theme.xml`, was created to be the main theme file. The ori
 ```
 ## BUGS
 - System info bugs out on various browsers, (Cores and screensize).
+
+
+
+
