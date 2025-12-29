@@ -41,6 +41,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=0.65, user-scalable=no" />
         <noscript>Javascript Needed For Page!</noscript>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/script.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/perfect-scrollbar.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/platform.min.js"></script>
@@ -444,6 +445,7 @@ t.appendChild(v);
         <div id="term-out">
             <p class="term-log">OASIS_HIDDEN_NODE [PROTO8]</p>
             <p class="term-log">CORE_ESTABLISHED_SUCCESS...</p>
+			<p class="term-log">TYPE "HELP" FOR COMMANDS.</p>
         </div>
         <div class="term-input-line">
             <span style="font-size:1.5rem; text-shadow: 0 0 10px #00ff41;">></span>
@@ -458,6 +460,41 @@ t.appendChild(v);
         const input = document.getElementById('term-in');
         const output = document.getElementById('term-out');
         const mainSearch = document.getElementById('searchBar');
+        
+        // Pyodide State
+        let pyodide = null;
+        let pyLoading = false;
+        let pyInputResolver = null; // Function to resolve the pending input promise
+
+        // JS Function for Python to await
+        window.get_terminal_input = () => {
+            return new Promise((resolve) => {
+                pyInputResolver = resolve;
+                // Change prompt to indicate input mode if you want, or just wait
+            });
+        };
+
+        async function initPyodide() {
+            if (pyodide) return true;
+            if (pyLoading) { log("PYTHON_CORE_LOADING..."); return false; }
+            
+            pyLoading = true;
+            log("INITIALIZING_PYTHON_WASMBRIDGE...");
+            
+            try {
+                pyodide = await loadPyodide({
+                    stdout: (text) => log("PY> " + text),
+                    stderr: (text) => log("ERR> " + text)
+                });
+                log("PYTHON_3.10_READY.");
+                pyLoading = false;
+                return true;
+            } catch (err) {
+                log("CRITICAL_FAILURE: " + err);
+                pyLoading = false;
+                return false;
+            }
+        }
 
         // SINGLE ROBUST TOGGLE
         document.addEventListener('keydown', (e) => {
@@ -492,13 +529,94 @@ t.appendChild(v);
             term.scrollTop = term.scrollHeight;
         }
 
-        input.addEventListener('keydown', (e) => {
+        input.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter') {
-                const cmd = input.value.toLowerCase().trim();
-                log("> " + cmd);
+                const rawVal = input.value;
                 input.value = "";
+
+                // INTERCEPT: If Python is waiting for input, send it there
+                if (pyInputResolver) {
+                    log(rawVal); // Echo user input to screen
+                    pyInputResolver(rawVal); // Resolve Promise
+                    pyInputResolver = null; // Clear resolver
+                    return; // STOP here, do not process as command
+                }
+
+                const cmd = rawVal.toLowerCase().trim();
+                log("> " + rawVal);
                 
-                if (cmd === 'fvck') {
+                if (cmd === 'python') {
+                    const ready = await initPyodide();
+                    if (ready) {
+                        log("EXECUTING_TEST_SCRIPT...");
+                        try {
+                            pyodide.runPython(`
+                                import sys
+                                print("OASIS_PYTHON_BRIDGE_ACTIVE")
+                                print(f"Version: {sys.version}")
+                            `);
+                        } catch(err) {
+                            log("EXEC_ERR: " + err);
+                        }
+                    }
+
+                } else if (cmd === 'game' || cmd === 'amason') {
+                    const ready = await initPyodide();
+                    if (ready) {
+                        log("FETCHING_AMASON_PY...");
+                        try {
+                            const response = await fetch("https://raw.githack.com/W0BBLEMASTER/weboasis/master/arcade/amason/amason.py");
+                            let code = await response.text();
+                            
+                            // Async IO Patch
+                            const inputPatch = `
+import js
+import asyncio
+
+async def input(prompt=""):
+    print(prompt, end="")
+    val = await js.get_terminal_input()
+    return val
+
+# Wrapper to run the game logic async
+async def main():
+`;
+                            // Indent the original code to fit under main()
+                            const indentedCode = code.split('\\n').map(line => '    ' + line).join('\\n');
+                            const runner = `
+    await main()
+
+# Execute
+import asyncio
+asyncio.ensure_future(main())
+`;
+                            log("PATCHING_ASYNC_IO...");
+                            // WARNING: This assumes amason.py is structured in a way that allows wrapping. 
+                            // If amason.py has global execution code, this wrap works.
+                            // However, we need to handle the 'async' requirement carefully.
+                            
+                            // SIMPLER STRATEGY: Just overwrite input and run. 
+                            // But Pyodide runPython is synchronous unless we use runPythonAsync.
+                            
+                            await pyodide.runPythonAsync(`
+import js
+import builtins
+
+async def async_input(prompt=""):
+    if prompt:
+        print(prompt)
+    return await js.get_terminal_input()
+
+builtins.input = async_input
+
+` + code);
+                            
+                        } catch(err) {
+                            log("GAME_LOAD_FAILURE: " + err);
+                        }
+                    }
+
+                } else if (cmd === 'fvck') {
                     log("⚠️SYSTEM_FAIL⚠️");
                     const painInterval = setInterval(() => {
                         const r = Math.floor(Math.random() * 50);
@@ -548,8 +666,23 @@ t.appendChild(v);
                 } else if (cmd === 'about') {
                     window.location.href = "/p/about.html";
 
+                } else if (cmd === 'sitemap') {
+                    window.location.href = "/p/sitemap.html";
+
+                } else if (cmd === 'src') {
+                    log("OPENING_SOURCE_REPOSITORY...");
+                    window.open("https://github.com/W0BBLEMASTER/weboasis", "_blank");
+
+                } else if (cmd === 'song') {
+                    log("CODE: BLVCK");
+                    window.open("https://www.youtube.com/watch?v=sxQ3P71kFXg", "_blank");
+
+                } else if (cmd === 'cls') {
+                    output.innerHTML = "";
+                    log("OASIS_HIDDEN_NODE [PROTO8]");
+
                 } else if (cmd === 'help') {
-                    log("SYS_NODES: FVCK, DONUT, HORSES, ABOUT, EXIT");
+                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, HORSES, SITEMAP, SRC");
 
                 } else if (cmd === 'exit') {
                     term.style.display = 'none';
