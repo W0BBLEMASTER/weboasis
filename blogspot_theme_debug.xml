@@ -12,7 +12,6 @@
 	<link rel="dns-prefetch" href="https://icanhazip.com" />
     
     <b:if cond='data:blog.url == data:blog.homepageUrl'>
-        <!-- DASHBOARD ONLY ASSETS -->
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/style.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/perfect-scrollbar.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/index_search_button.min.css" />
@@ -150,7 +149,6 @@ t.appendChild(v);
   </head>
   <body id="body" onresize="canvasApp()">
     <b:if cond='data:blog.url == data:blog.homepageUrl'>
-        <!-- START OASIS DASHBOARD -->
         <div class="background" id="canvasContainer"></div>
         <div id="mySidenav" class="sidenav" onMouseLeave="closeNav()">
         <a href="javascript:void(0);" class="closebtn" onclick="closeNav()">&#215;</a>
@@ -246,7 +244,7 @@ t.appendChild(v);
                 <p id="horses" class="btn hollow small animationBtn">Horses</p>
 				<span id="very" class="btn hollow small animationBtn">4U</span>
                 <p id="matrix" class="btn hollow small reset animationBtn">Reset Animation</p>
-                
+                 
             </div>
         </div>
         <div id="customBackgrounds">
@@ -358,7 +356,6 @@ t.appendChild(v);
     <b:section class='main' id='main' showaddelement='yes'>
       <b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog' version='1'>
         <b:includable id='main' var='top'>
-          <!-- This is where the blog posts will be rendered -->
           <b:loop values='data:posts' var='post'>
             <div class='post-outer'>
               <h3 class='post-title entry-title' itemprop='name'>
@@ -396,7 +393,6 @@ t.appendChild(v);
       </div>
     </div>
 
-    <!-- STEALTH TERMINAL OVERLAY [PROTO8_RAVE] -->
     <style>
         #oasis-term {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -464,29 +460,45 @@ t.appendChild(v);
         // Pyodide State
         let pyodide = null;
         let pyLoading = false;
-        let pyInputResolver = null; // Function to resolve the pending input promise
+        let pyInputResolver = null; 
+        let pyReplMode = false;
 
-        // JS Function for Python to await
+        // Python calls this to wait for terminal text
         window.get_terminal_input = () => {
             return new Promise((resolve) => {
                 pyInputResolver = resolve;
-                // Change prompt to indicate input mode if you want, or just wait
             });
         };
 
         async function initPyodide() {
             if (pyodide) return true;
             if (pyLoading) { log("PYTHON_CORE_LOADING..."); return false; }
-            
             pyLoading = true;
             log("INITIALIZING_PYTHON_WASMBRIDGE...");
-            
             try {
                 pyodide = await loadPyodide({
                     stdout: (text) => log("PY> " + text),
                     stderr: (text) => log("ERR> " + text)
                 });
-                log("PYTHON_3.10_READY.");
+                
+                // 1. Init: Load Pyodide + micropip package.
+                await pyodide.loadPackage("micropip");
+                
+                // Patch input() for REPL/Games
+                await pyodide.runPythonAsync(`
+                    import micropip
+                    import js
+                    import builtins
+                    import sys
+                    
+                    async def async_input(prompt=""):
+                        if prompt: print(prompt)
+                        return await js.get_terminal_input()
+                    
+                    builtins.input = async_input
+                `);
+
+                log("PYTHON_READY. MICROPIP_LOADED.");
                 pyLoading = false;
                 return true;
             } catch (err) {
@@ -496,27 +508,21 @@ t.appendChild(v);
             }
         }
 
-        // SINGLE ROBUST TOGGLE
-        document.addEventListener('keydown', (e) => {
-            if (e.key === '`') { 
-                e.preventDefault();
-                const isHidden = (term.style.display === 'none' || term.style.display === '');
-                
-                if (isHidden) {
-                    term.style.display = 'block';
-                    input.focus();
-                    if(mainSearch) {
-                        mainSearch.value = "";
-                        mainSearch.disabled = true;
-                    }
-                } else {
-                    term.style.display = 'none';
-                    if(mainSearch) {
-                        mainSearch.disabled = false;
-                        mainSearch.focus();
-                    }
-                }
+        // TOGGLE LOGIC
+        const toggleTerm = () => {
+            const isHidden = (term.style.display === 'none' || term.style.display === '');
+            if (isHidden) {
+                term.style.display = 'block';
+                input.focus();
+                if(mainSearch) { mainSearch.value = ""; mainSearch.disabled = true; }
+            } else {
+                term.style.display = 'none';
+                if(mainSearch) { mainSearch.disabled = false; mainSearch.focus(); }
             }
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '`') { e.preventDefault(); toggleTerm(); }
         });
 
         term.addEventListener('click', () => { input.focus(); });
@@ -534,30 +540,77 @@ t.appendChild(v);
                 const rawVal = input.value;
                 input.value = "";
 
-                // INTERCEPT: If Python is waiting for input, send it there
+                // FEED PYTHON IF WAITING (GAME MODE)
                 if (pyInputResolver) {
-                    log(rawVal); // Echo user input to screen
-                    pyInputResolver(rawVal); // Resolve Promise
-                    pyInputResolver = null; // Clear resolver
-                    return; // STOP here, do not process as command
+                    log(rawVal); 
+                    const resolve = pyInputResolver;
+                    pyInputResolver = null;
+                    resolve(rawVal);
+                    return; 
+                }
+
+                // REPL MODE
+                if (pyReplMode) {
+                    if (rawVal === 'exit()' || rawVal === 'quit()') {
+                        pyReplMode = false;
+                        log("EXITING_REPL...");
+                        return;
+                    }
+                    log(">>> " + rawVal);
+                    try {
+                        let result = await pyodide.runPythonAsync(rawVal);
+                        if (result !== undefined) log(result);
+                    } catch(err) {
+                        let errStr = err.toString();
+                        let lines = errStr.split('\n');
+                        let lastLine = lines[lines.length - 1] || lines[lines.length - 2]; 
+                        log("ERR: " + lastLine);
+                    }
+                    return;
                 }
 
                 const cmd = rawVal.toLowerCase().trim();
                 log("> " + rawVal);
+
+                // 3. Command: pip install <package>
+                if (cmd.startsWith("pip install ")) {
+                    const pkgName = rawVal.substring(12).trim();
+                    log(`FETCHING_PACKAGE: ${pkgName}...`);
+                    
+                    const ready = await initPyodide();
+                    if (ready) {
+                        try {
+                            // The specific logic requested
+                            await pyodide.runPythonAsync(`
+                                import micropip
+                                await micropip.install('${pkgName}')
+                            `);
+                            log(`SUCCESS: ${pkgName} INSTALLED.`);
+                        } catch(err) {
+                            log("INSTALL_ERROR: " + err);
+                        }
+                    }
+                    return;
+                }
                 
-                if (cmd === 'python') {
+                // 2. Command: py opens the interactive shell.
+                if (cmd === 'py') {
+                    const ready = await initPyodide();
+                    if (ready) {
+                        pyReplMode = true;
+                        log("ENTERING_INTERACTIVE_PYTHON_SHELL...");
+                        log("TYPE 'exit()' TO RETURN.");
+                    }
+
+                } else if (cmd === 'python') {
                     const ready = await initPyodide();
                     if (ready) {
                         log("EXECUTING_TEST_SCRIPT...");
-                        try {
-                            pyodide.runPython(`
-                                import sys
-                                print("OASIS_PYTHON_BRIDGE_ACTIVE")
-                                print(f"Version: {sys.version}")
-                            `);
-                        } catch(err) {
-                            log("EXEC_ERR: " + err);
-                        }
+                        await pyodide.runPythonAsync(`
+                            import sys
+                            print("OASIS_PYTHON_BRIDGE_ACTIVE")
+                            print(f"Version: {sys.version}")
+                        `);
                     }
 
                 } else if (cmd === 'game' || cmd === 'amason') {
@@ -567,50 +620,7 @@ t.appendChild(v);
                         try {
                             const response = await fetch("https://raw.githack.com/W0BBLEMASTER/weboasis/master/arcade/amason/amason.py");
                             let code = await response.text();
-                            
-                            // Async IO Patch
-                            const inputPatch = `
-import js
-import asyncio
-
-async def input(prompt=""):
-    print(prompt, end="")
-    val = await js.get_terminal_input()
-    return val
-
-# Wrapper to run the game logic async
-async def main():
-`;
-                            // Indent the original code to fit under main()
-                            const indentedCode = code.split('\\n').map(line => '    ' + line).join('\\n');
-                            const runner = `
-    await main()
-
-# Execute
-import asyncio
-asyncio.ensure_future(main())
-`;
-                            log("PATCHING_ASYNC_IO...");
-                            // WARNING: This assumes amason.py is structured in a way that allows wrapping. 
-                            // If amason.py has global execution code, this wrap works.
-                            // However, we need to handle the 'async' requirement carefully.
-                            
-                            // SIMPLER STRATEGY: Just overwrite input and run. 
-                            // But Pyodide runPython is synchronous unless we use runPythonAsync.
-                            
-                            await pyodide.runPythonAsync(`
-import js
-import builtins
-
-async def async_input(prompt=""):
-    if prompt:
-        print(prompt)
-    return await js.get_terminal_input()
-
-builtins.input = async_input
-
-` + code);
-                            
+                            await pyodide.runPythonAsync(code);
                         } catch(err) {
                             log("GAME_LOAD_FAILURE: " + err);
                         }
@@ -630,7 +640,7 @@ builtins.input = async_input
                         if (i < 200) {
                             log("GOOD_GOD_THE_PAIN");
                             i++;
-                            setTimeout(spam, 10); // Fast logcat speed
+                            setTimeout(spam, 10); 
                         } else {
                             clearInterval(painInterval);
                             output.style.backgroundColor = "";
@@ -682,7 +692,7 @@ builtins.input = async_input
                     log("OASIS_HIDDEN_NODE [PROTO8]");
 
                 } else if (cmd === 'help') {
-                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, HORSES, SITEMAP, SRC");
+                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, HORSES, SITEMAP, SRC, PY, PIP INSTALL");
 
                 } else if (cmd === 'exit') {
                     term.style.display = 'none';
@@ -803,7 +813,7 @@ builtins.input = async_input
                                             this.shape = this.stage.addChild(new createjs.Shape());
                                             try {
                                                 // FULL PATH
-                                                var p = "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";
+                                                var p = "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";
                                                 this.shape.graphics.f("#FFFFFF").p(p);
                                                 // Debug4 Fixes
                                                 this.shape.scaleX = 3.5; 
