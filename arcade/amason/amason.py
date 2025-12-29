@@ -65,7 +65,7 @@ def parse_command(command):
 
 def handle_command(action, target):
     global current_room, inventory, game_over
-    if action == 'quit':
+    if action == 'exit':
         print("Goodbye!")
         game_over = True
         return
@@ -112,13 +112,13 @@ def handle_command(action, target):
         else:
             print("You don't have that item or can't use it here.")
         return
-    print("I don't understand that command. Try 'go', 'take', 'use', 'look', 'inventory', or 'quit'.")
+    print("I don't understand that command. Try 'go', 'take', 'use', 'look', 'inventory', or 'exit'.")
 
 # --- Async Game Loop ---
 async def main():
     global game_over
     print("Welcome to Zork-ish Adventure!")
-    print("Type 'help' for commands, 'quit' to exit.")
+    print("Type 'help' for commands, 'exit' to exit.")
     display_room(current_room)
 
     while not game_over:
