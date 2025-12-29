@@ -1,10 +1,17 @@
-# zork_inspired_adventure.py
+# amason2.py - Async Port for WebOasis [PROTO8]
+import js
+import asyncio
+import builtins
 
-import sys
+# --- Async IO Bridge ---
+async def terminal_input(prompt=""):
+    if prompt:
+        print(prompt, end="")
+    return await js.get_terminal_input()
 
-# --- Game Data ---
+builtins.input = terminal_input
 
-# Rooms: name, description, exits (direction: room_name), items (item_name)
+# --- Game Data (UNCHANGED) ---
 rooms = {
     'West of House': {
         'description': 'You are standing in an open field west of a weathered house, with a boarded front door.',
@@ -23,7 +30,7 @@ rooms = {
     },
     'Inside House': {
         'description': 'You are inside the house. It is dusty and smells of decay. The front door is now open.',
-        'exits': {'south': 'West of House'}, # Assuming south exit leads back outside
+        'exits': {'south': 'West of House'},
         'items': []
     },
     'Forest': {
@@ -33,28 +40,22 @@ rooms = {
     }
 }
 
-# Player state
 current_room = 'West of House'
 inventory = []
 game_over = False
 
-# --- Game Logic ---
-
+# --- Game Logic (UNCHANGED) ---
 def display_room(room_name):
-    """Displays the current room's description, items, and exits."""
     room = rooms[room_name]
     print(f"\n--- {room_name} ---")
     print(room['description'])
-
     if room['items']:
         print("You see here: " + ", ".join(room['items']))
-
     exits = room['exits'].keys()
     if exits:
         print("Exits: " + ", ".join(exits))
 
 def parse_command(command):
-    """Parses player input into action and target."""
     parts = command.lower().split()
     if not parts:
         return None, None
@@ -63,36 +64,29 @@ def parse_command(command):
     return action, target
 
 def handle_command(action, target):
-    """Processes the player's command."""
     global current_room, inventory, game_over
-
     if action == 'quit':
         print("Goodbye!")
         game_over = True
         return
-
     if action == 'look':
         display_room(current_room)
         return
-
     if action == 'inventory' or action == 'i':
         if inventory:
             print("You are carrying: " + ", ".join(inventory))
         else:
             print("Your inventory is empty.")
         return
-
     if action == 'go':
         if target in rooms[current_room]['exits']:
             next_room_name = rooms[current_room]['exits'][target]
-            
-            # Special condition for the house door
             if current_room == 'West of House' and target == 'east' and 'rusty key' not in inventory:
                 print("The front door is boarded shut.")
             elif current_room == 'West of House' and target == 'east' and 'rusty key' in inventory:
                 print("You use the rusty key to unboard the front door.")
-                rooms['West of House']['exits']['east'] = 'Inside House' # Change exit to 'Inside House'
-                current_room = 'Inside House' # Move player to the inside
+                rooms['West of House']['exits']['east'] = 'Inside House'
+                current_room = 'Inside House'
                 display_room(current_room)
             else:
                 current_room = next_room_name
@@ -100,7 +94,6 @@ def handle_command(action, target):
         else:
             print("You can't go that way.")
         return
-
     if action == 'take' or action == 'get':
         if target in rooms[current_room]['items']:
             rooms[current_room]['items'].remove(target)
@@ -109,29 +102,30 @@ def handle_command(action, target):
         else:
             print(f"You don't see a {target} here.")
         return
-
     if action == 'use':
         if target == 'rusty key' and 'rusty key' in inventory:
             if current_room == 'West of House':
                 print("You use the rusty key to unboard the front door.")
-                rooms['West of House']['exits']['east'] = 'Inside House' # Change exit to 'Inside House'
-                # No room change here, player needs to 'go east' again
+                rooms['West of House']['exits']['east'] = 'Inside House'
             else:
                 print("You can't use the rusty key here.")
         else:
             print("You don't have that item or can't use it here.")
         return
-
     print("I don't understand that command. Try 'go', 'take', 'use', 'look', 'inventory', or 'quit'.")
 
-# --- Game Start ---
-print("Welcome to Zork-ish Adventure!")
-print("Type 'help' for commands, 'quit' to exit.")
+# --- Async Game Loop ---
+async def main():
+    global game_over
+    print("Welcome to Zork-ish Adventure!")
+    print("Type 'help' for commands, 'quit' to exit.")
+    display_room(current_room)
 
-display_room(current_room)
+    while not game_over:
+        command = await builtins.input("> ")
+        action, target = parse_command(command)
+        if action:
+            handle_command(action, target)
 
-while not game_over:
-    command = input("> ")
-    action, target = parse_command(command)
-    if action:
-        handle_command(action, target)
+# Start Execution
+asyncio.ensure_future(main())
