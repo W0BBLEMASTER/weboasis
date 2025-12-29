@@ -154,7 +154,7 @@ t.appendChild(v);
         <div id="mySidenav" class="sidenav" onMouseLeave="closeNav()">
         <a href="javascript:void(0);" class="closebtn" onclick="closeNav()">&#215;</a>
         <menu>
-			<a href='https://wobblemaster.blogspot.com/p/about.html'>ABOUT/CHANGELOG</a>
+			<a href='javascript:void(0);' onclick="document.dispatchEvent(new KeyboardEvent('keydown', {'key':'`'}));">CMD_EMU</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/news/index.html'>News</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/tech/index.html'>Tech</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/twitter/index.html'>Twitter</a>
@@ -394,6 +394,179 @@ t.appendChild(v);
         <button id="cancelAction" class="btn modal-btn modal-cancel">Cancel</button>
       </div>
     </div>
+
+    <!-- STEALTH TERMINAL OVERLAY [PROTO8_RAVE] -->
+    <style>
+        #oasis-term {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: #00ff41;
+            font-family: 'Courier New', monospace; z-index: 100000;
+            display: none; padding: 30px; box-sizing: border-box;
+            overflow: hidden;
+        }
+        /* VHS STATIC OVERLAY */
+        #oasis-term::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+        .term-input-line {
+            display: flex; align-items: center; width: 100%; position: relative; z-index: 5;
+        }
+        #term-in {
+            background: transparent !important; border: none !important; color: #00ff41 !important;
+            outline: none !important; font-family: inherit; font-size: 1.5rem; flex-grow: 1;
+            margin-left: 10px; text-transform: lowercase;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+        .term-log { 
+            margin: 5px 0; font-size: 1.1rem; position: relative; z-index: 5;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+            animation: neonPulse 3s infinite alternate;
+        }
+        @keyframes neonPulse {
+            from { text-shadow: 0 0 5px rgba(0, 255, 65, 0.5), 0 0 10px rgba(0, 255, 65, 0.3); }
+            to { text-shadow: 0 0 15px rgba(0, 255, 65, 0.9), 0 0 25px rgba(0, 255, 65, 0.6); }
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes chaos {
+            0% { filter: invert(1); background: red; }
+            50% { filter: grayscale(1); background: blue; }
+            100% { filter: invert(0); background: black; }
+        }
+    </style>
+    <div id="oasis-term" onclick="document.getElementById('term-in').focus();">
+        <div id="term-out">
+            <p class="term-log">OASIS_HIDDEN_NODE [PROTO8]</p>
+            <p class="term-log">CORE_ESTABLISHED_SUCCESS...</p>
+        </div>
+        <div class="term-input-line">
+            <span style="font-size:1.5rem; text-shadow: 0 0 10px #00ff41;">></span>
+            <input type="text" id="term-in" autocomplete="off" spellcheck="false" />
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    //<![CDATA[
+    (function() {
+        const term = document.getElementById('oasis-term');
+        const input = document.getElementById('term-in');
+        const output = document.getElementById('term-out');
+        const mainSearch = document.getElementById('searchBar');
+
+        // SINGLE ROBUST TOGGLE
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '`') { 
+                e.preventDefault();
+                const isHidden = (term.style.display === 'none' || term.style.display === '');
+                
+                if (isHidden) {
+                    term.style.display = 'block';
+                    input.focus();
+                    if(mainSearch) {
+                        mainSearch.value = "";
+                        mainSearch.disabled = true;
+                    }
+                } else {
+                    term.style.display = 'none';
+                    if(mainSearch) {
+                        mainSearch.disabled = false;
+                        mainSearch.focus();
+                    }
+                }
+            }
+        });
+
+        term.addEventListener('click', () => { input.focus(); });
+
+        function log(msg) {
+            const p = document.createElement('p');
+            p.className = 'term-log';
+            p.textContent = msg;
+            output.appendChild(p);
+            term.scrollTop = term.scrollHeight;
+        }
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = input.value.toLowerCase().trim();
+                log("> " + cmd);
+                input.value = "";
+                
+                if (cmd === 'fvck') {
+                    log("⚠️SYSTEM_FAIL⚠️");
+                    const painInterval = setInterval(() => {
+                        const r = Math.floor(Math.random() * 50);
+                        const g = Math.floor(Math.random() * 50);
+                        const b = Math.floor(Math.random() * 50);
+                        output.style.backgroundColor = `rgb(${r},${g},${b})`;
+                    }, 50);
+
+                    let i = 0;
+                    function spam() {
+                        if (i < 200) {
+                            log("GOOD_GOD_THE_PAIN");
+                            i++;
+                            setTimeout(spam, 10); // Fast logcat speed
+                        } else {
+                            clearInterval(painInterval);
+                            output.style.backgroundColor = "";
+                            setTimeout(() => {
+                                document.body.style.animation = "chaos 0.1s 50";
+                            }, 500);
+                            setTimeout(() => { 
+                                document.body.style.animation = ""; 
+                                output.innerHTML = ""; // CLS
+                                log("SYSTEM_RESTORED.");
+                            }, 3500);
+                        }
+                    }
+                    spam();
+
+                } else if (cmd === 'donut') {
+                    log("ACCESSING 405_CONTAINER...");
+                    term.style.display = 'none';
+                    if(mainSearch) mainSearch.disabled = false;
+                    const donutContainer = document.getElementById('donutContainer');
+                    const searchContainer = document.getElementById('searchContainer');
+                    if (donutContainer && searchContainer) {
+                        donutContainer.style.display = 'block';
+                        searchContainer.style.display = 'none';
+                    }
+
+                } else if (cmd === 'horses') {
+                    const h = document.getElementById('horses');
+                    if(h) h.click();
+                    term.style.display = 'none';
+                    if(mainSearch) mainSearch.disabled = false;
+
+                } else if (cmd === 'about') {
+                    window.location.href = "/p/about.html";
+
+                } else if (cmd === 'help') {
+                    log("SYS_NODES: FVCK, DONUT, HORSES, ABOUT, EXIT");
+
+                } else if (cmd === 'exit') {
+                    term.style.display = 'none';
+                    if(mainSearch) mainSearch.disabled = false;
+                }
+            }
+        });
+    })();
+    //]]>
+    </script>
+    <style>
+        @keyframes chaos {
+            0% { filter: invert(1); background: red; }
+            50% { filter: grayscale(1); background: blue; }
+            100% { filter: invert(0); background: black; }
+        }
+    </style>
     <div></div>
     <div id="secretMenu" class="modal">
       <div id="secretList"></div>
