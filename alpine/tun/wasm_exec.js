@@ -1,4 +1,4 @@
-// Copyright 2018 The Go Authors. All rights reserved.
+self.SharedArrayBuffer = undefined; self.Atomics = { ...self.Atomics, wait: function(){return "not-equal";}, notify: function(){return 0;} }; // Copyright 2018 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 

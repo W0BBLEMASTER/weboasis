@@ -1,4 +1,4 @@
-import "./wasm_exec.js";
+self.SharedArrayBuffer = undefined; self.Atomics = { ...self.Atomics, wait: function(){return "not-equal";}, notify: function(){return 0;} }; import "./wasm_exec.js";
 
 import ipStackAwait from "./ipstack.js";
 

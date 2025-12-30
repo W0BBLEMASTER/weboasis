@@ -1,4 +1,4 @@
-import {State, init} from "./tailscale_tun.js";
+self.SharedArrayBuffer = undefined; self.Atomics = { ...self.Atomics, wait: function(){return "not-equal";}, notify: function(){return 0;} }; import {State, init} from "./tailscale_tun.js";
 
 export { State };
 export async function autoConf({loginUrlCb, dnsIp, stateUpdateCb, netmapUpdateCb, controlUrl, authKey, ipMap}) {

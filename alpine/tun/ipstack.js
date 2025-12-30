@@ -1,4 +1,4 @@
-"use strict";
+self.SharedArrayBuffer = undefined; self.Atomics = { ...self.Atomics, wait: function(){return "not-equal";}, notify: function(){return 0;} }; "use strict";
 /*Compiled using Cheerp (R) by Leaning Technologies Ltd*/
 var __imul=Math.imul;
 var __fround=Math.fround;
@@ -957,7 +957,7 @@ function __ZN12_GLOBAL__N_111raiseSignalEi(){
 	;
 }
 function _testUseAtomicWaitJS(){
-	return ((((()=>{var ret;try{Atomics.wait(HEAP32,0,0,0);ret=true;}catch(e){ret=false;}return ret;})()|0)&1)!==0?1:0)|0;
+	return ((((()=>{var ret;try{(function(){return "not-equal";})(HEAP32,0,0,0);ret=true;}catch(e){ret=false;}return ret;})()|0)&1)!==0?1:0)|0;
 }
 function __ZL16read_nodejs_argsPKN6client6StringE(Larg0){
 	var tmp0=null,tmp1=null,tmp2=null,tmp3=0;

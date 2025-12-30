@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Leaning Technologies Ltd. All Rights Reserved.
+self.SharedArrayBuffer = undefined; self.Atomics = { ...self.Atomics, wait: function(){return "not-equal";}, notify: function(){return 0;} }; // Copyright 2017-2021 Leaning Technologies Ltd. All Rights Reserved.
 
 // An array of {path:"/path",handler:handlerObj} ordered by the most specific to the least
 var cheerpjFSMounts = [];
