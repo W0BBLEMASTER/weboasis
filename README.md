@@ -82,6 +82,7 @@ Created three distinct methods for hosting sub-apps (About/News) to bypass Blogs
 ✅ MORE COMING SOON. PLANS TO SWITCH FULLY TO GITHACK, AND MUCH MORE.
 ```
 ## BUGS
+- Grassta is bugged, does not load if selected twice, or over "Very" ThemePOC.
 - System info bugs out on various browsers, (Cores and screensize).
 
 
