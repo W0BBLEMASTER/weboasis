@@ -72,12 +72,16 @@ Created three distinct methods for hosting sub-apps (About/News) to bypass Blogs
 ### 3. SITEMAP & DISCOVERABILITY
 - **Visual Sitemap:** Integrated a Matrix-themed HTML sitemap (sitemap.html) for user navigation.
 - **Robots.txt:** Custom rules pointing bots directly to the GitHub-hosted XML sitemap via Githack.
-- **Authority Loop:** Redirects and internal linking established to trick search engines into treating GitHub and Blogspot as a single high-trust entity.
+- Authority Loop: Redirects and internal linking established to trick search engines into treating GitHub and Blogspot as a single high-trust entity.
+
+### 4. notesInput TWEAKS
+- **JOTPAD/notesInput PERSISTENCE:** Implemented surgical Browser Cache API integration. By storing synthetic `Response` objects containing Jotpad data, the system successfully bypasses `localStorage.clear()` and `Cookie` wipes initiated by legacy "Reset to Default" routines.
 
 ---
 ## DEBUG/BUGFIXES
 
 ```
+✅ notesInput TWEAKED TO NOT LOSE DATA ON REFRESH.
 ✅ TERMINAL BUTTON UNDER "CMD_EMU"
 ✅ SU Func to attempt to load Alpine Linux Mini
 ✅ Zorklike Game "AMASON" that runs MiniPy of some form, to be researched. [STILL IN ALPHA]
