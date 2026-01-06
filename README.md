@@ -78,12 +78,19 @@ Created three distinct methods for hosting sub-apps (About/News) to bypass Blogs
 ## DEBUG/BUGFIXES
 
 ```
-
+✅ TERMINAL BUTTON UNDER "CMD_EMU"
+✅ SU Func to attempt to load Alpine Linux Mini
+✅ Zorklike Game "AMASON" that runs MiniPy of some form, to be researched. [STILL IN ALPHA]
+✅ REMOVED REDUNDANCY POCs!
+✅ Full MicroPip inside py with a pseudo "pip install" cmd to install pip funcs in main term
 ✅ MORE COMING SOON. PLANS TO SWITCH FULLY TO GITHACK, AND MUCH MORE.
 ```
 ## BUGS
 - Grassta is bugged, does not load if selected twice, or over "Very" ThemePOC.
 - System info bugs out on various browsers, (Cores and screensize).
+- Su Func HEAVYLY broken
+- Main Terminal Cmd "HELP" redundancies (Chores)
+
 
 
 
