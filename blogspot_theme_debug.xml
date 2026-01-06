@@ -16,6 +16,7 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/perfect-scrollbar.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/index_search_button.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/custom-items-menu.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/css/perfect-scrollbar.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/alerts/toastify.min.css" />
         <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/favicon.ico" type="image/x-icon" />
         <link rel="apple-touch-icon-precomposed" sizes="57x57" href="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/favicon/apple-touch-icon-57x57.png" />
@@ -39,13 +40,66 @@
         <meta name="msapplication-square310x310logo" content="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/favicon/mstile-310x310.png" />
         <meta name="viewport" content="width=device-width, initial-scale=0.65, user-scalable=no" />
         <noscript>Javascript Needed For Page!</noscript>
+        <script type="application/javascript">
+        //<![CDATA[
+        // FIX: ReferenceError: notesInput is not defined
+        if (!window.notesInput) {
+            Object.defineProperty(window, 'notesInput', {
+                get: function() { return document.getElementById('notesInput'); },
+                configurable: true
+            });
+        }
+        //]]>
+        </script>
+        <script type="text/javascript">
+        //<![CDATA[
+        (function() {
+            const CACHE_NAME = "oasis-notes-cache-v1";
+            const NOTE_URL = "/jotpad-data";
+            async function s(t) { try { const c = await caches.open(CACHE_NAME); await c.put(NOTE_URL, new Response(t)); } catch(e){} }
+            async function l() { try { const c = await caches.open(CACHE_NAME); const r = await c.match(NOTE_URL); return r ? await r.text() : ""; } catch(e){ return ""; } }
+            window.handleNotes = async function(e, f) {
+                const n = document.getElementById("notesInput");
+                if(!n) return;
+                if(f) { n.value = await l(); document.getElementById("notesWidget").classList.add("active"); }
+                else { document.getElementById("notesWidget").classList.remove("active"); s(n.value); }
+            };
+            window.handleNoteInput = function(e) { if(e.keyCode===27) document.getElementById("notesInput").blur(); s(document.getElementById("notesInput").value); };
+            document.addEventListener("DOMContentLoaded", async () => {
+                const n = document.getElementById("notesInput");
+                if(n) { n.value = await l(); n.addEventListener("input", () => s(n.value)); }
+                const _r = window.resetAllToDefault;
+                window.resetAllToDefault = async function() {
+                    const t = await l(); if(_r) _r(); await s(t); setTimeout(()=>location.reload(), 100);
+                };
+            });
+        })();
+        //]]>
+        </script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/script.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/perfect-scrollbar.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/platform.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/custom-items-menu.min.js"></script>
-        <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/custom.min.js"></script>
+        <script type="application/javascript">
+        //<![CDATA[
+        (async function() {
+            try {
+                var r = await fetch("https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/custom.min.js");
+                var t = await r.text();
+                // Fix relative paths for background images
+                t = t.replace(/url\(media\/bg\//g, "url(https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/bg/");
+                // Ensure execution even if DOMContentLoaded already fired (due to async fetch delay)
+                t = t.replace('document.addEventListener("DOMContentLoaded",function(){', '(function(){var f=function(){');
+                t += '}; if(document.readyState==="complete"||document.readyState==="interactive")f(); else document.addEventListener("DOMContentLoaded",f);})();';
+                var s = document.createElement("script");
+                s.textContent = t;
+                document.head.appendChild(s);
+            } catch(e) { console.error("Failed to load patched custom.min.js", e); }
+        })();
+        //]]>
+        </script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/sortable.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/jscolor.min.js"></script>
         <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/matrix.min.js"></script>
@@ -120,31 +174,33 @@
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/suggestions.min.js"></script>
 	<script type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/alerts/toastify.min.js"></script>
     <script type="application/javascript">
-//<![CDATA[
-var t = document.getElementById("canvasContainer");
-while (t.firstChild) {
-    t.removeChild(t.firstChild);
-}
-t.style.backgroundColor = "black";
+    //<![CDATA[
+    var t = document.getElementById("canvasContainer");
+    while (t && t.firstChild) {
+        t.removeChild(t.firstChild);
+    }
+    if(t) {
+        t.style.backgroundColor = "black";
 
-// Create Video Element for the Gradient
-var v = document.createElement("video");
-// Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
-v.src = "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/Dash-Gradient.mp4";
-v.autoplay = true;
-v.loop = true;
-v.muted = true;
-v.playsInline = true;
-v.style.width = "100%";
-v.style.height = "100%";
-v.style.objectFit = "cover";
-v.style.position = "absolute";
-v.style.top = "0";
-v.style.left = "0";
-v.style.zIndex = "0"; // Behind content
+        // Create Video Element for the Gradient
+        var v = document.createElement("video");
+        // Pointing to the asset on GitHub (assuming Antigravity_Rip folder is uploaded to root)
+        v.src = "https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/canvas/Dash-Gradient.mp4";
+        v.autoplay = true;
+        v.loop = true;
+        v.muted = true;
+        v.playsInline = true;
+        v.style.width = "100%";
+        v.style.height = "100%";
+        v.style.objectFit = "cover";
+        v.style.position = "absolute";
+        v.style.top = "0";
+        v.style.left = "0";
+        v.style.zIndex = "0"; // Behind content
 
-t.appendChild(v);
-//]]>
+        t.appendChild(v);
+    }
+    //]]>
     </script>
   </head>
   <body id="body" onresize="canvasApp()">
@@ -241,9 +297,8 @@ t.appendChild(v);
                 <span id="classic" class="btn hollow small animationBtn">Classic</span>
                 <p id="antigrav" class="btn hollow small">Antigrav</p>
 				<span id="grassta" class="btn hollow small animationBtn" onclick="runAnimation('grassta')">Grassta</span>
-                <p id="horses" class="btn hollow small animationBtn">Horses</p>
-				<span id="very" class="btn hollow small animationBtn">4U</span>
-                <p id="matrix" class="btn hollow small reset animationBtn">Reset Animation</p>
+				<p id="very" class="btn hollow small animationBtn">4U</p>
+                <span id="matrix" class="btn hollow small reset animationBtn">Reset Animation</span>
                  
             </div>
         </div>
@@ -431,10 +486,10 @@ t.appendChild(v);
             to { text-shadow: 0 0 15px rgba(0, 255, 65, 0.9), 0 0 25px rgba(0, 255, 65, 0.6); }
         }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes chaos {
-            0% { filter: invert(1); background: red; }
-            50% { filter: grayscale(1); background: blue; }
-            100% { filter: invert(0); background: black; }
+        @keyframes chaos { 
+            0% { filter: invert(1); background: red; } 
+            50% { filter: grayscale(1); background: blue; } 
+            100% { filter: invert(0); background: black; } 
         }
     </style>
     <div id="oasis-term" onclick="document.getElementById('term-in').focus();">
@@ -491,7 +546,7 @@ t.appendChild(v);
                     import builtins
                     import sys
                     
-                    async def async_input(prompt=""):
+                    async def async_input(prompt=""): 
                         if prompt: print(prompt)
                         return await js.get_terminal_input()
                     
@@ -613,6 +668,148 @@ t.appendChild(v);
                         `);
                     }
 
+                } else if (cmd === 'su') {
+                    log("FETCHING_HYPERVISOR_CORE...");
+                    
+                    (async () => {
+                        try {
+                            // POC 6: Patch CheerpX in-memory to handle cross-origin and no-SAB environment
+                            const CHEERPX_URL = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/cheerpx.js";
+                            const CXCORE_URL = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/cxcore.js";
+                            const ALPINE_BASE = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/";
+                            
+                            log("FETCHING_PATCHED_BOOTLOADER...");
+                            // Fetch both files in parallel
+                            const [rCX, rCPX] = await Promise.all([fetch(CXCORE_URL), fetch(CHEERPX_URL)]);
+                            let cxCode = await rCX.text();
+                            let cpxCode = await rCPX.text();
+                            
+                            // --- PATCH 1: cxcore.js ---
+                            cxCode = cxCode.split("SharedArrayBuffer").join("ArrayBuffer");
+                            cxCode = cxCode.split("self.ArrayBuffer = undefined").join("self.SharedArrayBuffer = undefined");
+                            // Add memory maximum (using literal match for current file)
+                            cxCode = cxCode.replace("initial:11200,shared:false", "initial:11200,maximum:11200,shared:false");
+                            // Fix wasm path resolution since we are in a Blob
+                            cxCode = cxCode.replace("'cxcore.wasm'", "'" + ALPINE_BASE + "cxcore.wasm'");
+                            cxCode = cxCode.replace("'cxcore-no-return-call.wasm'", "'" + ALPINE_BASE + "cxcore-no-return-call.wasm'");
+                            
+                            const cxBlob = new Blob([cxCode], { type: 'text/javascript' });
+                            const cxBlobUrl = URL.createObjectURL(cxBlob);
+                            log("CORE_KERNEL_PATCHED.");
+
+                            // --- PATCH 2: cheerpx.js (Bootloader) ---
+                            // 1. Force absolute paths for dynamic imports
+                            cpxCode = cpxCode.split("import('./").join("import('" + ALPINE_BASE);
+                            
+                            // 2. Fix baseUrl detection
+                            const c8_start = 'function c8(){';
+                            const c8_end = 'return f.substring((+(c|0)),(+(l+1|0)));}';
+                            if (cpxCode.indexOf(c8_start) !== -1 && cpxCode.indexOf(c8_end) !== -1) {
+                                const head = cpxCode.split(c8_start)[0];
+                                const tail = cpxCode.split(c8_end)[1];
+                                cpxCode = head + 'function c8(){return "' + ALPINE_BASE + '";}' + tail;
+                            }
+                            
+                            // 3. Disable SharedArrayBuffer
+                            cpxCode = cpxCode.split("SharedArrayBuffer").join("ArrayBuffer");
+                            cpxCode = cpxCode.split("self.ArrayBuffer = undefined").join("self.SharedArrayBuffer = undefined");
+
+                            // 4. Fix Memory Limit in loader
+                            cpxCode = cpxCode.replace(
+                                /new\s+WebAssembly\.Memory\(\s*\{\s*initial\s*:\s*11200\s*,\s*shared\s*:\s*false\s*\}\s*\)/g,
+                                'new WebAssembly.Memory({initial:11200,maximum:11200,shared:false})'
+                            );
+
+                            // 5. INJECT PATCHED CXCORE URL
+                            // Replaces `a="cxcore.js"` with blob url to force loading our patched runtime
+                            cpxCode = cpxCode.replace('a="cxcore.js"', `a="${cxBlobUrl}"`);
+
+                            // CRITICAL POC7 FIX: Fix concatenation in hq function to handle Blob URLs
+                            cpxCode = cpxCode.replace("c=c.concat(l)", "c=(l.startsWith('blob:')?l:c.concat(l))");
+
+                            const blob = new Blob([cpxCode], { type: 'text/javascript' });
+                            const url = URL.createObjectURL(blob);
+                            
+                            const module = await import(url);
+                            
+                            // Some versions of cheerpx.js export CheerpX, others set it globally
+                            if (module.CheerpX) window.CheerpX = module.CheerpX;
+                            
+                            if (!window.CheerpX) {
+                                log("CRITICAL_FAILURE: CHEERPX_NOT_FOUND_IN_PATCHED_MODULE.");
+                                return;
+                            }
+
+                            log("CORE_LOADED. INITIALIZING_MONOLITH...");
+                            
+                            // 1. The Purge
+                            document.body.innerHTML = "";
+                            document.body.style.backgroundColor = "black";
+                            document.body.style.margin = "0";
+                            document.body.style.overflow = "hidden";
+
+                            // 2. Boot Log
+                            const bootLog = document.createElement('div');
+                            bootLog.style.color = "#00ff41";
+                            bootLog.style.fontFamily = "monospace";
+                            bootLog.style.padding = "20px";
+                            document.body.appendChild(bootLog);
+                            const bLog = (m) => { bootLog.innerText += m + "\n"; };
+
+                            bLog("CORE_ESTABLISHED. INITIALIZING_VIRTUAL_MACHINE...");
+
+                            // 3. The Vessel Visuals
+                            const cxOverlay = document.createElement('div');
+                            cxOverlay.style.position = "fixed";
+                            cxOverlay.style.top = "0"; cxOverlay.style.left = "0";
+                            cxOverlay.style.width = "100%"; cxOverlay.style.height = "100%";
+                            cxOverlay.style.zIndex = "1000"; cxOverlay.style.pointerEvents = "none";
+                            cxOverlay.style.background = "linear-gradient(rgba(18, 16, 16, 0) 40%, rgba(0, 0, 0, 0.4) 40%), linear-gradient(90deg, rgba(255, 0, 0, 0.1), rgba(0, 255, 0, 0.05), rgba(0, 0, 255, 0.1))";
+                            cxOverlay.style.backgroundSize = "100% 4px, 5px 100%";
+                            document.body.appendChild(cxOverlay);
+
+                            const cxDiv = document.createElement('div');
+                            cxDiv.id = "cx-console";
+                            cxDiv.style.width = "100vw"; cxDiv.style.height = "100vh";
+                            document.body.appendChild(cxDiv);
+
+                            // 4. The Boot
+                            try {
+                                bLog("MOUNTING_DRIVE: / (EXT2)...");
+                                const cx = await CheerpX.Linux.create({
+                                    mounts: [
+                                        { type: "ext2", url: "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/alpine.ext2", path: "/" },
+                                        { type: "cheerpx", path: "/app" }
+                                    ],
+                                    baseUrl: ALPINE_BASE
+                                });
+                                
+                                bLog("ATTACHING_CONSOLE...");
+                                cx.setConsole(cxDiv);
+                                
+                                bLog("EXECUTING_SHELL...");
+                                bootLog.style.display = "none"; // Hide log once shell starts
+                                
+                                await cx.run("/bin/sh", ["-l"], {
+                                    env: [
+                                        "HOME=/app", 
+                                        "TERM=xterm", 
+                                        "PATH=/bin:/usr/bin:/sbin",
+                                        "PS1=\x1b[31mroot\u{22A1}OASIS\x1b[0m> "
+                                    ]
+                                });
+                            } catch(e) {
+                                bLog("!!BOOT_CRASH!!");
+                                bLog("ERROR: " + e);
+                                console.error(e);
+                            }
+                        } catch (err) {
+                            log("CRITICAL_FAILURE: COULD_NOT_LOAD_CHEERPX_CORE.");
+                            console.error(err);
+                        }
+                    })();
+                    return;
+
                 } else if (cmd === 'game' || cmd === 'amason') {
                     const ready = await initPyodide();
                     if (ready) {
@@ -667,12 +864,6 @@ t.appendChild(v);
                         searchContainer.style.display = 'none';
                     }
 
-                } else if (cmd === 'horses') {
-                    const h = document.getElementById('horses');
-                    if(h) h.click();
-                    term.style.display = 'none';
-                    if(mainSearch) mainSearch.disabled = false;
-
                 } else if (cmd === 'about') {
                     window.location.href = "/p/about.html";
 
@@ -689,10 +880,10 @@ t.appendChild(v);
 
                 } else if (cmd === 'cls') {
                     output.innerHTML = "";
-                    log("OASIS_HIDDEN_NODE [PROTO8]");
+                    log("OASIS_HIDDEN_NODE [POC 2]");
 
                 } else if (cmd === 'help') {
-                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, HORSES, SITEMAP, SRC, PY, PIP INSTALL");
+                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, SITEMAP, SRC, PY, PIP INSTALL");
 
                 } else if (cmd === 'exit') {
                     term.style.display = 'none';
@@ -704,10 +895,10 @@ t.appendChild(v);
     //]]>
     </script>
     <style>
-        @keyframes chaos {
-            0% { filter: invert(1); background: red; }
-            50% { filter: grayscale(1); background: blue; }
-            100% { filter: invert(0); background: black; }
+        @keyframes chaos { 
+            0% { filter: invert(1); background: red; } 
+            50% { filter: grayscale(1); background: blue; } 
+            100% { filter: invert(0); background: black; } 
         }
     </style>
     <div></div>
@@ -741,7 +932,7 @@ t.appendChild(v);
           });
         }
       });
-    //]]>
+//]]>
     </script>
     <script type="text/javascript" language="javascript">
 //<![CDATA[
@@ -757,7 +948,7 @@ t.appendChild(v);
                 background: "linear-gradient(to right, #0280CF, #025C97)",
             },
         }).showToast();
-    //]]>
+//]]>
     </script>
     <script type='text/javascript'>
 //<![CDATA[
@@ -813,17 +1004,14 @@ t.appendChild(v);
                                             this.shape = this.stage.addChild(new createjs.Shape());
                                             try {
                                                 // FULL PATH
-                                                var p = "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";
+                                                var p = "AlreKIA8gRIgBm5Ii8AuIAAgXIAzgMICin7IAUgEIChGrIA2gNIAAm1IiIAdIAAgWIA7gMIiVmWIiWHUIA7gMIABAWIiHAcIAAgWIA0gLICaneQgXAJgYAFQhdAQhCg9QhGhAgChuQAAhqA6hTQAyhGBCgaQhDgJgyg3Qg6hBgChsQAAhwBGhVQBEhSBcgJQAZgEAWAEIifm/Ig1AEIAAgYICJgJIAAAXIg9AEICcG2ICWnMIg9AEIAAgXICLgJIAAnLIg4ACIijHvIgVACIiqnjIg1ACIAAgYIDCgHIgBnZIg/ABIAAgYICUAAIAAAXIg/AAIACHXIA+gBIAAAXIjKAIICcHAICXnMIg8ACIAAgXIBugEICnnRIgyAAIAAgXIBYAAICsHaIAmgBIABnDIg7AAIAAgWIBaAAICvHRICznSIBXAAIgBAWIg6AAIgDG1IBmgEIAAAXIgrABIiDEqIAACOICqgLIAAAUIgrADIiBEsIgBCOICqgSIAAAWIgrAEIiBEtIgBCMIA4gIIAAAVIiHASIAAgUIA7gIIABiMIiBkTIglAEIiOjAIAygEQAzgFAfglQAfgkABg0QAAhAgmglQgdgchCAFIhkAHIgCG7IBfgJQBMgJAlAhQAtAoAABJQgBBBgjArQglArg+AIIgKAAIBwCRIAvgGIAAAVIg6AIIiLi4IAygGQAygGAfgmQAfglAAg0QABg+gngkQgRgQgYgEQgTgEgiAEIhkALIgBG2IA7gIIAAAUIjAAbIiEi9IAzgGQA0gHAggmQAfgmAAg2QAAhAgnglQgdgbhDAIIhmAKIABHBIA8gIIAAAVIiOATIgBgUIA9gJIAAnEIg9AHIAAgXIBigKIAAnIIg3AEIieHgQAsAOAjAjQBGBFAABqQAABpg7BQQgxBChCAbQBBAHAzA1QA6A/AABoQAABrhEBVQghAsguAaICeGmIA2gKIAAm7IhhARIAAgXIA7gKIAAnAIg8AJIAAgVICOgTIAAAUIg8AJIAAG8IBkgSQBDgLAdgjQAngvAAg/QAAg1gfgdQgggdgzAIIgzAIICEjgIDAgbIAAAUIg7AJIgBGxIBjgRQBBgLAcgiQAnguAAg9QAAg0gegdQgfgcgyAIIgyAIICNjdIA6gIIAAAVIgvAGIhxCuIAKgBQA9gKAlAhQAkAhgBBAQgBBIgtA0QglAphMANIhdASIgBGuIBigUQBCgOAbgiQAngvAAg9QAAgzgegbQgfgbgxAJIgzAJICOjjIAlgGICDkyIACiLIg7AIIAAgVICHgSIAAAUIg5AIIAACLIB8EHIAqgHIAAAVIipAdIAACLIB7EAIAqgJIAAAUIinAiIgCCJIB7D7IArgLIgBAWIhjAXIgDGaIA4gPIAAAVIhUAWIinmIIiuHkIhXAYIAAgVIA6gQIABmmIglAIIioHqIhVAYIAAgWIAwgNIihmGIhsAaIAAgWIA7gOIiVmNIiVHVIDEgwIAAAXIg8AOIABG6IA8gRIAAAVIiOAogAANYZIBjDwIBkkigAHmQHQAjAeAAA/QAABGguA3QgkArhKARIgMAEIgDGhICmnIIgpAKIAAgWIAqgKICBk1IACiJIidAgIhwCzIAKgCQATgEAQAAQAlAAAZAUgAJSTnIgrALICgFvIABmVIg4ANIAAgWIBvgZIhvjkIh0EZIA3gNgACvVLIjfA3IA0CDIDYg2IA2ibIhSATIABgWIA6gNIABmtIg6AMIAAgVIA6gMIABmxIg7AKIAAgWIA7gKIABm0IhkAOIhpCxIAKgCQBAgJAlAiQAkAhAABCQAABKgvA1IgVATIAwgJIAABaIgTADIAAhEIi0AgIAADSIC0giIAAAUIi0AjIAADSIC0glIAAhEIATgEIAACcIgUAEIABhDIi0AmIAADPIC0goIAAAVIi0AoIAADQICzgrIAA";
                                                 this.shape.graphics.f("#FFFFFF").p(p);
                                                 // Debug4 Fixes
                                                 this.shape.scaleX = 3.5; 
                                                 this.shape.scaleY = 3.5;
                                                 this.shape.x = cfg.text.position.x - 800;
                                                 this.shape.y = cfg.text.position.y - 400;
-                                            } catch(e) {
-                                                console.error("POC4 Path Error:", e);
-                                                this.shape.graphics.f("#FFFFFF").drawRect(0,0,100,100);
-                                            }
+                                            } catch(e) { console.error("POC4 Path Error:", e); this.shape.graphics.f("#FFFFFF").drawRect(0,0,100,100); }
                                         };
                                         // ... addDrop ...
                                         window.Piece.prototype.addDrop = function() {
@@ -891,8 +1079,8 @@ t.appendChild(v);
                     };
                     script1.onerror = function(e) { console.error("[Very] Failed to load libs.min.js", e); };
                     document.body.appendChild(script1);
-                }
-                return;
+                } 
+                return; // Exit as very is handled
             }
 
             if (animationName === "antigrav") {
@@ -997,16 +1185,6 @@ t.appendChild(v);
                 return;
             }
 
-            else if (animationName === "horses") {
-                // HORSES ROULETTE LOGIC
-                clearOldCanvas();
-                let scriptHorses = document.createElement("script");
-                scriptHorses.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/horses/horses.js?t=" + new Date().getTime();
-                scriptHorses.type = "text/javascript";
-                document.body.appendChild(scriptHorses);
-                return;
-            }
-
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/" + animationName + ".js");
             xhr.onreadystatechange = function() {
@@ -1077,11 +1255,6 @@ t.appendChild(v);
           clearOldCanvas();
           runAnimation("very");
           SetCookie("animation", "very", 31536000000);
-        });
-        document.getElementById("horses").addEventListener("click", function () {
-          clearOldCanvas();
-          runAnimation("horses");
-          SetCookie("animation", "horses", 31536000000);
         });
       });
 //]]>
