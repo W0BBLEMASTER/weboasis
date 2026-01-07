@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebOas.is | CHRONOS_OS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Share+Tech+Mono', monospace;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100%; }
+        }
+
+        .container {
+            padding: 50px;
+            max-width: 900px;
+            margin: auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            border-bottom: 2px solid #00ff41;
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before, .glitch::after {
+            content: 'CHRONOS_OS';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+            animation: glitch-anim2 1s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            100% { clip: rect(70px, 9999px, 71px, 0); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            100% { clip: rect(10px, 9999px, 30px, 0); }
+        }
+
+        .section {
+            margin-top: 40px;
+            background: rgba(0, 255, 65, 0.05);
+            padding: 20px;
+            border-left: 5px solid #00ff41;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li::before {
+            content: "> ";
+        }
+
+        .footer {
+            margin-top: 60px;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            text-decoration: none;
+            transition: all 0.3s;
+            background: transparent;
+            cursor: pointer;
+            font-family: 'Share+Tech+Mono', monospace;
+            text-transform: uppercase;
+            font-size: 1rem;
+        }
+
+        .btn:hover, .mode-btn.active {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+        }
+
+        /* Timer Specific Overrides */
+        #timer-display {
+            font-size: 5rem;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px #00ff41;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .input-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="number"] {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #00ff4133;
+            color: #00ff41;
+            font-family: 'Share+Tech+Mono', monospace;
+            font-size: 1.2rem;
+            width: 60px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-bottom-color: #00ff41;
+        }
+
+        /* Remove arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #pomo-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            color: #ff0041;
+            z-index: 100;
+            background: #000;
+            padding: 40px;
+            border: 5px solid #ff0041;
+            box-shadow: 0 0 100px #ff0041;
+            animation: pulse 0.5s infinite;
+            font-family: 'Share+Tech+Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .glitch-red {
+            text-shadow: 2px 0 #00fff9, -2px 0 #ff00c1;
+        }
+        
+        .controls {
+            text-align: center;
+        }
+        
+        .mode-container {
+            text-align: center;
+        }
+        
+        .mode-btn {
+            margin: 0 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div id="pomo-alert" class="glitch-red">PIVOT!</div>
+
+    <div class="container">
+        <h1 class="glitch">CHRONOS_OS</h1>
+        
+        <div class="section">
+            <h3>[ SYSTEM: ACTIVE ]</h3>
+            <div id="timer-display">25:00</div>
+            
+            <div class="mode-container">
+                <button class="btn mode-btn active" onclick="setMode('work')">WORK</button>
+                <button class="btn mode-btn" onclick="setMode('break')">BREAK</button>
+                <button class="btn mode-btn" onclick="setMode('long')">LONG_BRK</button>
+            </div>
+
+            <div class="input-wrapper">
+                <span>SET_MINS:</span>
+                <input type="number" id="custom-min" min="1" max="999" placeholder="25" onchange="setCustomTime()" onkeydown="if(event.key === 'Enter') { setCustomTime(); toggleTimer(); }">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>[ CONTROL_UNIT ]</h3>
+            <div class="controls">
+                <button class="btn" id="start-btn" onclick="toggleTimer()">START</button>
+                <button class="btn" onclick="resetTimer()">RESET</button>
+            </div>
+            <p id="status-text" style="text-align: center; margin-top: 20px; letter-spacing: 2px;">SYSTEM: IDLE</p>
+        </div>
+
+        <div class="section">
+            <h3>[ DATA_STREAM ]</h3>
+            <ul id="system-log">
+                <li>INITIALIZING CHRONOS_CORE...</li>
+                <li>POMO_ENGINE: STANDBY</li>
+            </ul>
+        </div>
+
+        <a href="../index.html" class="btn">RETURN TO DASHBOARD</a>
+
+        <div class="footer">
+            REVIVAL_CORE // CHRONOS_v1.1 // POMODORO_READY
+        </div>
+    </div>
+
+    <script>
+        let timeLeft;
+        let timerId = null;
+        let currentMode = localStorage.getItem('timerMode') || 'work';
+        let isRunning = false;
+
+        const modes = {
+            work: 25 * 60,
+            break: 5 * 60,
+            long: 15 * 60
+        };
+
+        function log(msg) {
+            const logEl = document.getElementById('system-log');
+            const newLi = document.createElement('li');
+            newLi.textContent = msg;
+            logEl.prepend(newLi);
+            if (logEl.children.length > 3) logEl.lastElementChild.remove();
+        }
+
+        function setCustomTime() {
+            const val = document.getElementById('custom-min').value;
+            if (val && val > 0) {
+                timeLeft = val * 60;
+                updateDisplay();
+                log(`CUSTOM_DURATION_SET: ${val}M`);
+                setStatus(`MODE: CUSTOM (${val}M)`);
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            localStorage.setItem('timerMode', mode);
+            timeLeft = modes[mode];
+            updateDisplay();
+            
+            // UI Update
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerText.toLowerCase().includes(mode)) btn.classList.add('active');
+            });
+
+            if (isRunning) {
+                clearInterval(timerId);
+                isRunning = false;
+                document.getElementById('start-btn').innerText = 'START';
+            }
+            setStatus(`MODE: ${mode.toUpperCase()}`);
+            log(`SWITCHED_TO: ${mode.toUpperCase()}`);
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').innerText = display;
+            document.title = `${display} | CHRONOS`;
+        }
+
+        function setStatus(msg) {
+            document.getElementById('status-text').innerText = msg;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('start-btn');
+            if (isRunning) {
+                clearInterval(timerId);
+                isRunning = false;
+                btn.innerText = 'START';
+                setStatus('SYSTEM: PAUSED');
+            } else {
+                isRunning = true;
+                btn.innerText = 'STOP';
+                setStatus('SYSTEM: RUNNING');
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    updateDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerId);
+                        triggerPomo();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+            document.getElementById('start-btn').innerText = 'START';
+            timeLeft = modes[currentMode];
+            updateDisplay();
+            setStatus('SYSTEM: RESET');
+            document.getElementById('pomo-alert').style.display = 'none';
+        }
+
+        function triggerPomo() {
+            isRunning = false;
+            document.getElementById('start-btn').innerText = 'START';
+            setStatus('SYSTEM: POMO_REQUIRED');
+            const alert = document.getElementById('pomo-alert');
+            alert.style.display = 'block';
+            
+            // Beep simulation or just visual for now
+            console.log("POMO!");
+            
+            // Auto hide alert after 10s or on reset
+            setTimeout(() => {
+                // alert.style.display = 'none';
+            }, 10000);
+        }
+
+        // Init
+        setMode('work');
+    </script>
+</body>
+</html>
