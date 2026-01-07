@@ -229,6 +229,7 @@
             <a href='https://www.windows93.net/#!trollbox'>Chat</a>
 			<a href='http://streamwat.ch'>Live</a>
 			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/todo/index.html'>Todo</a>
+            <a href='/p/timer.html'>Timer</a>
 			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/text/index.html'>Text</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/faq/index.html'>FAQ</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/qr/index.html'>QR</a>
@@ -866,6 +867,8 @@
 
                 } else if (cmd === 'about') {
                     window.location.href = "/p/about.html";
+                } else if (cmd === 'timer') {
+                    window.location.href = "/p/timer.html";
 
                 } else if (cmd === 'sitemap') {
                     window.location.href = "/p/sitemap.html";
@@ -883,7 +886,7 @@
                     log("OASIS_HIDDEN_NODE [POC 2]");
 
                 } else if (cmd === 'help') {
-                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, SITEMAP, SRC, PY, PIP INSTALL");
+                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, SITEMAP, SRC, TIMER, PY, PIP INSTALL");
 
                 } else if (cmd === 'exit') {
                     term.style.display = 'none';
