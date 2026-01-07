@@ -224,17 +224,16 @@
         
         <div class="section">
             <h3>[ SYSTEM: ACTIVE ]</h3>
-            <div id="timer-display">25:00</div>
+            <div id="timer-display">45:00</div>
             
             <div class="mode-container">
                 <button class="btn mode-btn active" onclick="setMode('work')">WORK</button>
                 <button class="btn mode-btn" onclick="setMode('break')">BREAK</button>
-                <button class="btn mode-btn" onclick="setMode('long')">LONG_BRK</button>
             </div>
 
             <div class="input-wrapper">
                 <span>SET_MINS:</span>
-                <input type="number" id="custom-min" min="1" max="999" placeholder="25" onchange="setCustomTime()" onkeydown="if(event.key === 'Enter') { setCustomTime(); toggleTimer(); }">
+                <input type="number" id="custom-min" min="1" max="999" placeholder="45" onchange="setCustomTime()" onkeydown="if(event.key === 'Enter') { setCustomTime(); toggleTimer(); }">
             </div>
         </div>
 
@@ -269,9 +268,8 @@
         let isRunning = false;
 
         const modes = {
-            work: 25 * 60,
-            break: 5 * 60,
-            long: 15 * 60
+            work: 45 * 60,
+            break: 15 * 60
         };
 
         function log(msg) {
