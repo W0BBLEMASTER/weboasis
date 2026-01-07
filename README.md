@@ -1,10 +1,13 @@
 # Weboasis Blogspot Theme Conversion
+
+### Below are the stable, and debug variants of my websites. I do this as such to keep it uniform incase features you enjoy break. 
+
 ## https://weboasiz.blogspot.com
 ### PROTO7 STABLE
 ## https://wobblemaster.blogspot.com 
 ### PROTO8 DEBUG
 
-This document outlines the changes made to convert the static Weboasis startpage into a functional Blogspot theme.
+#### This document outlines the changes made to convert the static Weboasis startpage into a functional Blogspot theme.
 
 ## Project Goal
 
@@ -81,6 +84,7 @@ Created three distinct methods for hosting sub-apps (About/News) to bypass Blogs
 ## DEBUG/BUGFIXES
 
 ```
+✅ SITEMAP HIJACK/VISUAL SITEMAP FULLY FUNCTIONAL VIA CUSTOM XML PARSER (MASTER_REPOSITORY_NODES)
 ✅ notesInput TWEAKED TO NOT LOSE DATA ON REFRESH.
 ✅ TERMINAL BUTTON UNDER "CMD_EMU"
 ✅ SU Func to attempt to load Alpine Linux Mini
