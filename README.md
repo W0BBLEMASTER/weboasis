@@ -2,10 +2,11 @@
 
 ### Below are the stable, and debug variants of my websites. I do this as such to keep it uniform incase features you enjoy break. 
 
-## https://weboasiz.blogspot.com
+
 ### PROTO7 STABLE
-## https://wobblemaster.blogspot.com 
+## • https://weboasiz.blogspot.com •
 ### PROTO8 DEBUG
+## • https://wobblemaster.blogspot.com •
 
 #### This document outlines the changes made to convert the static Weboasis startpage into a functional Blogspot theme.
 
@@ -98,6 +99,7 @@ Created three distinct methods for hosting sub-apps (About/News) to bypass Blogs
 - System info bugs out on various browsers, (Cores and screensize).
 - Su Func HEAVYLY broken
 - Main Terminal Cmd "HELP" redundancies (Chores)
+
 
 
 
