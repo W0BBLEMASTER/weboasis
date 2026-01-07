@@ -111,17 +111,208 @@
     <span class="loading">Accessing Mainframe...</span>
     
     <script type="text/javascript">
-    var toc_config = { 
-        url: 'https://wobblemaster.blogspot.com', 
-        containerId: 'weboasis-sitemap', 
-        showNew: 10, 
-        newText: ' <span class="new-tag">DATA_NEW</span>', 
-        sortAlphabetically: { thePanel: true, theList: true }, 
-        maxResults: 9999, 
-        slideSpeed: { down: 300, up: 300 }, 
-        delayLoading: 0
-    };
+    //<![CDATA[
+    (async function() {
+        const container = document.getElementById('weboasis-sitemap');
+        const loading = container.querySelector('.loading');
+        const sitemapUrl = 'https://raw.githack.com/W0BBLEMASTER/weboasis/master/sitemap.xml';
+
+        try {
+            const response = await fetch(sitemapUrl);
+            const text = await response.text();
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, "text/xml");
+            const urls = xmlDoc.getElementsByTagName("url");
+            
+            if (loading) loading.remove();
+            
+            const list = document.createElement('ol');
+            Array.from(urls).forEach(urlNode => {
+                const loc = urlNode.getElementsByTagName("loc")[0].textContent;
+                const priority = urlNode.getElementsByTagName("priority")[0]?.textContent || "0.5";
+                
+                // Get name from URL
+                let name = loc.replace('https://wobblemaster.blogspot.com/', '').replace('index.html', '').replace(/\/$/, '');
+                if (!name) name = "HOME_NODE";
+                name = name.toUpperCase();
+
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${loc}">${name}</a> <span class="new-tag">P:${priority}</span>`;
+                list.appendChild(li);
+            });
+            
+            const header = document.createElement('div');
+            header.className = 'toc-header active';
+            header.textContent = 'MASTER_REPOSITORY_NODES';
+            
+            container.appendChild(header);
+            container.appendChild(list);
+
+        } catch (e) {
+            if (loading) loading.textContent = "CORE_ACCESS_DENIED: " + e.message;
+            console.error(e);
+        }
+    })();
+    //]]>
     </script>
-    <script src="https://invictusaman.github.io/csshosting/htmlsitemap.js" type="text/javascript"></script>
+</div>
+</div>
+<div dir="ltr" style="text-align: left;" trbidi="on">
+<style type="text/css">
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+/* WebOas.is Visual Sitemap Core */
+.weboasis-sitemap { 
+    background-color: #000; 
+    color: #00ff41; 
+    font-family: 'Share Tech Mono', monospace; 
+    font-size: 14px; 
+    border: 1px solid #00ff41;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+    border-radius: 2px;
+    padding: 10px;
+}
+
+/* Data Node Headers (Labels) */
+.weboasis-sitemap .toc-header { 
+    color: #00ff41; 
+    font-weight: bold; 
+    text-transform: uppercase;
+    background-color: #0a0a0a; 
+    margin: 5px 0; 
+    padding: 12px; 
+    cursor: pointer; 
+    border: 1px solid #333;
+    transition: 0.2s;
+    letter-spacing: 2px;
+}
+
+.weboasis-sitemap .toc-header:hover { 
+    background: #00ff41; 
+    color: #000;
+    box-shadow: 0 0 10px #00ff41;
+}
+
+.weboasis-sitemap .toc-header:before { 
+    content: '[+]'; 
+    float: right; 
+    margin-left: 10px;
+}
+
+.weboasis-sitemap .toc-header.active { 
+    border-color: #00ff41; 
+    background: #050505;
+}
+
+.weboasis-sitemap .toc-header.active:before { 
+    content: '[-]';
+}
+
+/* Loading State */
+.weboasis-sitemap .loading { 
+    display: block; 
+    padding: 30px; 
+    text-align: center;
+    color: #00ff41; 
+    text-transform: uppercase; 
+    animation: blink 1s infinite;
+}
+
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+/* Link List */
+.weboasis-sitemap ol { 
+    margin: 0; 
+    padding: 5px 20px; 
+    list-style: none; 
+    border-left: 1px dashed #00ff41;
+    margin-left: 15px;
+}
+
+.weboasis-sitemap li { 
+    padding: 8px 0; 
+    border-bottom: 1px solid #111;
+}
+
+.weboasis-sitemap li::before { 
+    content: "> "; 
+    color: #00ff41;
+}
+
+.weboasis-sitemap a { 
+    color: #00ff41 !important; 
+    text-decoration: none; 
+    opacity: 0.8;
+}
+
+.weboasis-sitemap a:hover { 
+    opacity: 1; 
+    text-shadow: 0 0 5px #00ff41;
+}
+
+/* New Content Tag */
+.new-tag {
+    font-size: 9px;
+    background: #00ff41;
+    color: #000;
+    padding: 1px 4px;
+    margin-left: 8px;
+    font-weight: bold;
+}
+</style>
+
+<div class="weboasis-sitemap" id="weboasis-sitemap">
+    <div style="text-align:center; padding: 20px;">
+        <img src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/logo.svg" style="height: 50px; filter: drop-shadow(0 0 5px #00ff41);" />
+        <h2 style="letter-spacing: 5px; margin-top: 10px;">CORE_SITEMAP</h2>
+    </div>
+    
+    <span class="loading">Accessing Mainframe...</span>
+    
+    <script type="text/javascript">
+    //<![CDATA[
+    (async function() {
+        const container = document.getElementById('weboasis-sitemap');
+        const loading = container.querySelector('.loading');
+        const sitemapUrl = 'https://raw.githack.com/W0BBLEMASTER/weboasis/master/sitemap.xml';
+
+        try {
+            const response = await fetch(sitemapUrl);
+            const text = await response.text();
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, "text/xml");
+            const urls = xmlDoc.getElementsByTagName("url");
+            
+            if (loading) loading.remove();
+            
+            const list = document.createElement('ol');
+            Array.from(urls).forEach(urlNode => {
+                const loc = urlNode.getElementsByTagName("loc")[0].textContent;
+                const priority = urlNode.getElementsByTagName("priority")[0]?.textContent || "0.5";
+                
+                // Get name from URL
+                let name = loc.replace('https://wobblemaster.blogspot.com/', '').replace('index.html', '').replace(/\/$/, '');
+                if (!name) name = "HOME_NODE";
+                name = name.toUpperCase();
+
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${loc}">${name}</a> <span class="new-tag">P:${priority}</span>`;
+                list.appendChild(li);
+            });
+            
+            const header = document.createElement('div');
+            header.className = 'toc-header active';
+            header.textContent = 'MASTER_REPOSITORY_NODES';
+            
+            container.appendChild(header);
+            container.appendChild(list);
+
+        } catch (e) {
+            if (loading) loading.textContent = "CORE_ACCESS_DENIED: " + e.message;
+            console.error(e);
+        }
+    })();
+    //]]>
+    </script>
 </div>
 </div>
