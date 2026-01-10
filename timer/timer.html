@@ -229,11 +229,19 @@
             <div class="mode-container">
                 <button class="btn mode-btn active" onclick="setMode('work')">WORK</button>
                 <button class="btn mode-btn" onclick="setMode('break')">BREAK</button>
+                <button class="btn mode-btn" onclick="setMode('nap')">NAP</button>
             </div>
 
             <div class="input-wrapper">
-                <span>SET_MINS:</span>
-                <input type="number" id="custom-min" min="1" max="999" placeholder="45" onchange="setCustomTime()" onkeydown="if(event.key === 'Enter') { setCustomTime(); toggleTimer(); }">
+                <span>SET_TIME:</span>
+                <input type="number" id="custom-hour" min="0" max="99" placeholder="HH" 
+                    oninput="if(this.value.length > 2) this.value = this.value.slice(0,2); if(this.value.length === 2) document.getElementById('custom-min').focus(); setCustomTime()">
+                <span style="font-size: 1.2rem; color: #00ff41;">:</span>
+                <input type="number" id="custom-min" min="0" max="59" placeholder="MM" 
+                    oninput="if(this.value.length > 2) this.value = this.value.slice(0,2); if(this.value.length === 2) document.getElementById('custom-sec').focus(); setCustomTime()">
+                <span style="font-size: 1.2rem; color: #00ff41;">:</span>
+                <input type="number" id="custom-sec" min="0" max="59" placeholder="SS" 
+                    oninput="if(this.value.length > 2) this.value = this.value.slice(0,2); setCustomTime()">
             </div>
         </div>
 
@@ -269,7 +277,8 @@
 
         const modes = {
             work: 45 * 60,
-            break: 15 * 60
+            break: 15 * 60,
+            nap: 180 * 60
         };
 
         function log(msg) {
@@ -281,12 +290,15 @@
         }
 
         function setCustomTime() {
-            const val = document.getElementById('custom-min').value;
-            if (val && val > 0) {
-                timeLeft = val * 60;
+            const hrs = parseInt(document.getElementById('custom-hour').value) || 0;
+            const mins = parseInt(document.getElementById('custom-min').value) || 0;
+            const secs = parseInt(document.getElementById('custom-sec').value) || 0;
+            
+            if (hrs > 0 || mins > 0 || secs > 0) {
+                timeLeft = (hrs * 3600) + (mins * 60) + secs;
                 updateDisplay();
-                log(`CUSTOM_DURATION_SET: ${val}M`);
-                setStatus(`MODE: CUSTOM (${val}M)`);
+                log(`CUSTOM_DURATION_SET: ${hrs}H ${mins}M ${secs}S`);
+                setStatus(`MODE: CUSTOM (${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')})`);
                 document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
             }
         }
@@ -313,9 +325,10 @@
         }
 
         function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const hrs = Math.floor(timeLeft / 3600);
+            const mins = Math.floor((timeLeft % 3600) / 60);
+            const secs = timeLeft % 60;
+            const display = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             document.getElementById('timer-display').innerText = display;
             document.title = `${display} | CHRONOS`;
         }
@@ -374,6 +387,18 @@
 
         // Init
         setMode('work');
+
+        // Global Enter Key Listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent focused buttons from triggering their own click
+                if (['custom-hour', 'custom-min', 'custom-sec'].includes(document.activeElement.id)) {
+                    setCustomTime();
+                }
+                if (document.activeElement) document.activeElement.blur();
+                toggleTimer();
+            }
+        });
     </script>
 </body>
 </html>
