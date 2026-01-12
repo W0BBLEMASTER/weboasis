@@ -90,9 +90,11 @@
                 var t = await r.text();
                 // Fix relative paths for background images
                 t = t.replace(/url\(media\/bg\//g, "url(https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/bg/");
-                // Ensure execution even if DOMContentLoaded already fired (due to async fetch delay)
-                t = t.replace('document.addEventListener("DOMContentLoaded",function(){', '(function(){var f=function(){');
-                t += '}; if(document.readyState==="complete"||document.readyState==="interactive")f(); else document.addEventListener("DOMContentLoaded",f);})();';
+                
+                // Force execution by replacing DOMContentLoaded with a direct call via setTimeout
+                // This handles cases where the event has already fired.
+                t = t.replace('document.addEventListener("DOMContentLoaded",', 'setTimeout(');
+                
                 var s = document.createElement("script");
                 s.textContent = t;
                 document.head.appendChild(s);
@@ -158,6 +160,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.65, user-scalable=no" />
     <noscript>Javascript Needed For Page!</noscript>
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/jquery-3.6.0.min.js"></script>
+    <!-- DUPLICATE BLOCK 2 REMOVED (FULL)
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/script.min.js"></script>
     <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/perfect-scrollbar.min.js"></script>
     <script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/platform.min.js"></script>
@@ -173,6 +176,7 @@
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/keyscroll.min.js"></script>
 	<script defer='defer' type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/js/suggestions.min.js"></script>
 	<script type="application/javascript" src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/alerts/toastify.min.js"></script>
+    -->
     <script type="application/javascript">
     //<![CDATA[
     var t = document.getElementById("canvasContainer");
@@ -229,9 +233,11 @@
             <a href='https://www.windows93.net/#!trollbox'>Chat</a>
 			<a href='http://streamwat.ch'>Live</a>
 			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/todo/index.html'>Todo</a>
+            <a href='/p/timer.html'>Timer</a>
 			<a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/text/index.html'>Text</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/faq/index.html'>FAQ</a>
             <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/qr/index.html'>QR</a>
+            <a href='https://raw.githack.com/W0BBLEMASTER/weboasis/master/sitemap.html' onclick="history.pushState(null, null, '/sitemap.xml');">Sitemap</a>
         </menu><hr/>
         <div id="customcontainer">
             <div id="show-hide-customization">
@@ -299,7 +305,6 @@
 				<span id="grassta" class="btn hollow small animationBtn" onclick="runAnimation('grassta')">Grassta</span>
 				<p id="very" class="btn hollow small animationBtn">4U</p>
                 <span id="matrix" class="btn hollow small reset animationBtn">Reset Animation</span>
-                 
             </div>
         </div>
         <div id="customBackgrounds">
@@ -506,6 +511,14 @@
 
     <script type="text/javascript">
     //<![CDATA[
+    // SITEMAP HIJACK GADGET FALLBACK
+    // See PRJ_PYRAMID/gadget_sitemap_hijack.html for external gadget implementation.
+    // If the gadget is active, it handles the 404 Dragnet and History Hijack.
+    //]]>
+    </script>
+
+    <script type="text/javascript">
+    //<![CDATA[
     (function() {
         const term = document.getElementById('oasis-term');
         const input = document.getElementById('term-in');
@@ -685,8 +698,8 @@
                             let cpxCode = await rCPX.text();
                             
                             // --- PATCH 1: cxcore.js ---
-                            cxCode = cxCode.split("SharedArrayBuffer").join("ArrayBuffer");
-                            cxCode = cxCode.split("self.ArrayBuffer = undefined").join("self.SharedArrayBuffer = undefined");
+                            // REMOVED: Destructive SharedArrayBuffer patches (File is already pre-patched)
+                            
                             // Add memory maximum (using literal match for current file)
                             cxCode = cxCode.replace("initial:11200,shared:false", "initial:11200,maximum:11200,shared:false");
                             // Fix wasm path resolution since we are in a Blob
@@ -866,6 +879,8 @@
 
                 } else if (cmd === 'about') {
                     window.location.href = "/p/about.html";
+                } else if (cmd === 'timer') {
+                    window.location.href = "/p/timer.html";
 
                 } else if (cmd === 'sitemap') {
                     window.location.href = "/p/sitemap.html";
@@ -883,7 +898,7 @@
                     log("OASIS_HIDDEN_NODE [POC 2]");
 
                 } else if (cmd === 'help') {
-                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, SITEMAP, SRC, PY, PIP INSTALL");
+                    log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, SITEMAP, SRC, TIMER, PY, PIP INSTALL");
 
                 } else if (cmd === 'exit') {
                     term.style.display = 'none';
@@ -967,6 +982,10 @@
         var currentAnimationInterval;
 
         function clearOldCanvas(){
+            if(window.createjs && createjs.Ticker) {
+                createjs.Ticker.reset();
+                createjs.Ticker.removeAllEventListeners();
+            }
             if(currentAnimationInterval) clearInterval(currentAnimationInterval);
             let t=document.getElementById("canvasContainer");
             for(;t.firstChild;)t.removeChild(t.firstChild);
@@ -1134,6 +1153,14 @@
                 clearOldCanvas();
                 let t = document.getElementById("canvasContainer");
                 if (t) {
+                    // Cleanup existing player if it exists
+                    if (window.player && window.player.destroy) {
+                        try { window.player.destroy(); } catch(e) {}
+                        window.player = null;
+                    }
+                    let oldAudio = document.getElementById("youtube-audio");
+                    if (oldAudio) oldAudio.remove();
+
                     // Create canvas element
                     t.innerHTML = '<canvas id="matrixCanvas"></canvas>'; 
                     
@@ -1143,43 +1170,35 @@
                     youtubeAudioDiv.style.display = "none";
                     document.body.appendChild(youtubeAudioDiv);
 
-                    // YouTube iframe API loading (global, if not already loaded)
-                    if (!window.YT) { // Check if YouTube API is already loaded
-                        var tag = document.createElement('script');
-                        tag.src = "https://www.youtube.com/iframe_api";
-                        var firstScriptTag = document.getElementsByTagName('script')[0];
-                        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-                    }
-
-                    // Define global YouTube API callback and player
-                    window.player; // Declare global player object
-                    window.onYouTubeIframeAPIReady = function() {
+                    var initPlayer = function() {
                         window.player = new YT.Player('youtube-audio', {
                             height: '0',
                             width: '0',
                             videoId: 'vY6B8uj1plY',
                             events: {
-                                'onReady': window.onPlayerReady // Use the global onPlayerReady
+                                'onReady': function(event) {
+                                    event.target.mute();
+                                    event.target.playVideo();
+                                }
                             }
                         });
                     };
 
-                    window.onPlayerReady = function(event) {
-                        event.target.mute();
-                        event.target.playVideo();
-                    };
+                    // YouTube iframe API loading
+                    if (!window.YT) { 
+                        var tag = document.createElement('script');
+                        tag.src = "https://www.youtube.com/iframe_api";
+                        var firstScriptTag = document.getElementsByTagName('script')[0];
+                        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                        window.onYouTubeIframeAPIReady = initPlayer;
+                    } else if (window.YT.Player) {
+                        initPlayer();
+                    }
 
-                    // Load grassta.js from Githack for POC2 - CORRECTED URL
+                    // Load grassta.js with cache-buster
                     var grasstaScript = document.createElement("script");
                     grasstaScript.type = "text/javascript";
-                    grasstaScript.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/grassta/grassta.js"; // Githack URL for POC2
-                    grasstaScript.onload = function() {
-                        // After grassta.js loads and executes canvasApp,
-                        // potentially handle resizing or other post-load logic if needed.
-                        // For now, canvasApp should be self-executing within grassta.js
-                        // and correctly target 'matrixCanvas'.
-                        // No explicit call to canvasApp() here, as it's assumed to be self-executing.
-                    };
+                    grasstaScript.src = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/js/canvas/grassta/grassta.js?t=" + new Date().getTime();
                     document.body.appendChild(grasstaScript);
                 }
                 return;
