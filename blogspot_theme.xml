@@ -499,7 +499,7 @@
     </style>
     <div id="oasis-term" onclick="document.getElementById('term-in').focus();">
         <div id="term-out">
-            <p class="term-log">OASIS_HIDDEN_NODE [PROTO8]</p>
+            <p class="term-log">OASIS_HIDDEN_NODE [PROTO 8]</p>
             <p class="term-log">CORE_ESTABLISHED_SUCCESS...</p>
 			<p class="term-log">TYPE "HELP" FOR COMMANDS.</p>
         </div>
@@ -895,7 +895,7 @@
 
                 } else if (cmd === 'cls') {
                     output.innerHTML = "";
-                    log("OASIS_HIDDEN_NODE [POC 2]");
+                    log("OASIS_HIDDEN_NODE [PROTO 8]");
 
                 } else if (cmd === 'help') {
                     log("SYS_NODES: ABOUT, CLS, DONUT, EXIT, FVCK, GAME, SITEMAP, SRC, TIMER, PY, PIP INSTALL");
