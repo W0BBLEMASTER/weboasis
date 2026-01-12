@@ -92,6 +92,9 @@ Created three distinct methods for hosting sub-apps (About/News) to bypass Blogs
 ✅ Zorklike Game "AMASON" that runs MiniPy of some form, to be researched. [STILL IN ALPHA]
 ✅ REMOVED REDUNDANCY POCs!
 ✅ Full MicroPip inside py with a pseudo "pip install" cmd to install pip funcs in main term
+✅ Fixed redundancies inside xml for script.min.js that caused a memleak.
+✅ Plans to reimpliment SU
+✅ Plans to use WASMLoader to fix theming issues with AntiGrav on the fly!
 ✅ MORE COMING SOON. PLANS TO SWITCH FULLY TO GITHACK, AND MUCH MORE.
 ```
 ## BUGS
