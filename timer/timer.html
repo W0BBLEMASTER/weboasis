@@ -134,11 +134,91 @@
 
         /* Timer Specific Overrides */
         #timer-display {
-            font-size: 5rem;
-            letter-spacing: 5px;
+            font-size: 4rem;
+            letter-spacing: 3px;
             text-shadow: 0 0 20px #00ff41;
             text-align: center;
-            margin: 20px 0;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            white-space: nowrap;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .hud-wrapper {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            margin: 40px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hud-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hud-scanline::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 255, 65, 0.4) 50%, transparent 100%);
+            animation: scan-circle 2s linear infinite;
+        }
+
+        @keyframes scan-circle {
+            0% { top: -20%; }
+            100% { top: 120%; }
+        }
+
+        .hud-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .hud-ring circle {
+            fill: none;
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .hud-ring .bg {
+            stroke: rgba(0, 255, 65, 0.1);
+        }
+
+        .hud-ring .progress {
+            stroke: #00ff41;
+            stroke-dasharray: 973.89;
+            stroke-dashoffset: 973.89;
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0 0 8px #00ff41);
+        }
+
+        .hud-decor {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
         .input-wrapper {
@@ -217,14 +297,28 @@
 </head>
 <body>
     <div class="scanline"></div>
-    <div id="pomo-alert" class="glitch-red">PIVOT!</div>
+    <div id="pomo-alert" class="glitch-red" onclick="dismissPomo()">PIVOT!</div>
 
     <div class="container">
         <h1 class="glitch">CHRONOS_OS</h1>
         
         <div class="section">
             <h3>[ SYSTEM: ACTIVE ]</h3>
-            <div id="timer-display">45:00</div>
+            
+            <div class="hud-wrapper">
+                <div class="hud-scanline"></div>
+                <svg class="hud-ring" viewBox="0 0 340 340">
+                    <circle class="bg" cx="170" cy="170" r="155" />
+                    <circle id="hud-progress" class="progress" cx="170" cy="170" r="155" />
+                </svg>
+                
+                <svg class="hud-decor" viewBox="0 0 340 340">
+                    <path d="M170 15 L170 25 M170 315 L170 325 M15 170 L25 170 M315 170 L325 170" stroke="#00ff41" stroke-width="2" opacity="0.5"/>
+                    <circle cx="170" cy="170" r="165" fill="none" stroke="#00ff41" stroke-width="1" stroke-dasharray="10 20" opacity="0.2" />
+                </svg>
+
+                <div id="timer-display">45:00</div>
+            </div>
             
             <div class="mode-container">
                 <button class="btn mode-btn active" onclick="setMode('work')">WORK</button>
@@ -274,12 +368,24 @@
         let timerId = null;
         let currentMode = localStorage.getItem('timerMode') || 'work';
         let isRunning = false;
+        let totalTime = 45 * 60; // Initial total time
 
         const modes = {
             work: 45 * 60,
             break: 15 * 60,
             nap: 180 * 60
         };
+
+        const HUD_CIRCUMFERENCE = 973.89;
+
+        function updateHUD() {
+            const hudProgress = document.getElementById('hud-progress');
+            if (hudProgress && totalTime > 0) {
+                const percentage = timeLeft / totalTime;
+                const offset = HUD_CIRCUMFERENCE * (1 - percentage);
+                hudProgress.style.strokeDashoffset = offset;
+            }
+        }
 
         function log(msg) {
             const logEl = document.getElementById('system-log');
@@ -296,7 +402,9 @@
             
             if (hrs > 0 || mins > 0 || secs > 0) {
                 timeLeft = (hrs * 3600) + (mins * 60) + secs;
+                totalTime = timeLeft; // Update totalTime for HUD
                 updateDisplay();
+                updateHUD();
                 log(`CUSTOM_DURATION_SET: ${hrs}H ${mins}M ${secs}S`);
                 setStatus(`MODE: CUSTOM (${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')})`);
                 document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
@@ -307,7 +415,9 @@
             currentMode = mode;
             localStorage.setItem('timerMode', mode);
             timeLeft = modes[mode];
+            totalTime = timeLeft; // Sync totalTime
             updateDisplay();
+            updateHUD();
             
             // UI Update
             document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -331,6 +441,7 @@
             const display = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             document.getElementById('timer-display').innerText = display;
             document.title = `${display} | CHRONOS`;
+            updateHUD();
         }
 
         function setStatus(msg) {
@@ -348,6 +459,8 @@
                 isRunning = true;
                 btn.innerText = 'STOP';
                 setStatus('SYSTEM: RUNNING');
+                // Ensure totalTime is valid on start
+                if (totalTime <= 0) totalTime = timeLeft; 
                 timerId = setInterval(() => {
                     timeLeft--;
                     updateDisplay();
@@ -364,7 +477,9 @@
             isRunning = false;
             document.getElementById('start-btn').innerText = 'START';
             timeLeft = modes[currentMode];
+            totalTime = timeLeft; // Reset totalTime
             updateDisplay();
+            updateHUD();
             setStatus('SYSTEM: RESET');
             document.getElementById('pomo-alert').style.display = 'none';
         }
@@ -388,10 +503,23 @@
         // Init
         setMode('work');
 
+        function dismissPomo() {
+            const alert = document.getElementById('pomo-alert');
+            if (alert.style.display === 'block') {
+                alert.style.display = 'none';
+                log("[ ALERT_CLEARED: MANUAL_OVERRIDE ]");
+                resetTimer();
+            }
+        }
+
         // Global Enter Key Listener
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                e.preventDefault(); // Prevent focused buttons from triggering their own click
+                e.preventDefault(); 
+                if (document.getElementById('pomo-alert').style.display === 'block') {
+                    dismissPomo();
+                    return;
+                }
                 if (['custom-hour', 'custom-min', 'custom-sec'].includes(document.activeElement.id)) {
                     setCustomTime();
                 }
