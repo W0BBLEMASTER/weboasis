@@ -7,9 +7,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
+        :root {
+            --theme-color: #00ff41;
+        }
+
         body {
             background: #0a0a0a;
-            color: #00ff41;
+            color: var(--theme-color);
             font-family: 'Share+Tech+Mono', monospace;
             overflow-x: hidden;
             margin: 0;
@@ -45,9 +49,9 @@
             font-size: 3rem;
             text-transform: uppercase;
             letter-spacing: 5px;
-            border-bottom: 2px solid #00ff41;
+            border-bottom: 2px solid var(--theme-color);
             padding-bottom: 10px;
-            text-shadow: 0 0 10px #00ff41;
+            text-shadow: 0 0 10px var(--theme-color);
         }
 
         .glitch {
@@ -73,7 +77,7 @@
 
         .glitch::after {
             left: -2px;
-            text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+            text-shadow: -2px 0 var(--theme-color), 2px 2px #ff00c1;
             animation: glitch-anim2 1s infinite linear alternate-reverse;
         }
 
@@ -91,7 +95,7 @@
             margin-top: 40px;
             background: rgba(0, 255, 65, 0.05);
             padding: 20px;
-            border-left: 5px solid #00ff41;
+            border-left: 5px solid var(--theme-color);
             box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
         }
 
@@ -115,8 +119,8 @@
             display: inline-block;
             margin-top: 20px;
             padding: 10px 20px;
-            border: 1px solid #00ff41;
-            color: #00ff41;
+            border: 1px solid var(--theme-color);
+            color: var(--theme-color);
             text-decoration: none;
             transition: all 0.3s;
             background: transparent;
@@ -127,16 +131,16 @@
         }
 
         .btn:hover, .mode-btn.active {
-            background: #00ff41;
+            background: var(--theme-color);
             color: #000;
-            box-shadow: 0 0 20px #00ff41;
+            box-shadow: 0 0 20px var(--theme-color);
         }
 
         /* Timer Specific Overrides */
         #timer-display {
             font-size: 4rem;
             letter-spacing: 3px;
-            text-shadow: 0 0 20px #00ff41;
+            text-shadow: 0 0 20px var(--theme-color);
             text-align: center;
             margin: 0;
             position: absolute;
@@ -178,7 +182,8 @@
             left: 0;
             width: 100%;
             height: 20%;
-            background: linear-gradient(to bottom, transparent 0%, rgba(0, 255, 65, 0.4) 50%, transparent 100%);
+            background: linear-gradient(to bottom, transparent 0%, var(--theme-color) 50%, transparent 100%);
+            opacity: 0.4;
             animation: scan-circle 2s linear infinite;
         }
 
@@ -203,15 +208,16 @@
         }
 
         .hud-ring .bg {
-            stroke: rgba(0, 255, 65, 0.1);
+            stroke: var(--theme-color);
+            opacity: 0.1;
         }
 
         .hud-ring .progress {
-            stroke: #00ff41;
+            stroke: var(--theme-color);
             stroke-dasharray: 973.89;
             stroke-dashoffset: 973.89;
             transition: stroke-dashoffset 1s linear;
-            filter: drop-shadow(0 0 8px #00ff41);
+            filter: drop-shadow(0 0 8px var(--theme-color));
         }
 
         .hud-decor {
@@ -232,14 +238,33 @@
         input[type="number"] {
             background: transparent;
             border: none;
-            border-bottom: 2px solid #00ff4133;
-            color: #00ff41;
+            border-bottom: 2px solid var(--theme-color);
+            opacity: 0.3;
+            color: var(--theme-color);
             font-family: 'Share+Tech+Mono', monospace;
             font-size: 1.2rem;
             width: 60px;
             text-align: center;
             outline: none;
-            transition: border-color 0.3s;
+            transition: opacity 0.3s;
+        }
+
+        input[type="number"]:focus {
+            opacity: 1;
+        }
+
+        #native-picker-wrap {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--theme-color);
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
         }
 
         input[type="number"]:focus {
@@ -298,6 +323,12 @@
 <body>
     <div class="scanline"></div>
     <div id="pomo-alert" class="glitch-red" onclick="dismissPomo()">PIVOT!</div>
+
+    <div id="native-picker-wrap">
+        <label for="timer-color">SYSTEM_HUE:</label>
+        <input type="color" id="timer-color" value="#00ff41" 
+            oninput="updateThemeColor(this.value)">
+    </div>
 
     <div class="container">
         <h1 class="glitch">CHRONOS_OS</h1>
@@ -503,6 +534,14 @@
         // Init
         setMode('work');
 
+        function updateThemeColor(color) {
+            document.documentElement.style.setProperty('--theme-color', color);
+            localStorage.setItem('timer-color', color);
+            const picker = document.getElementById('timer-color');
+            if (picker && picker.value !== color) picker.value = color;
+            log(`SYSTEM_HUE_CALIBRATED: ${color}`);
+        }
+
         function dismissPomo() {
             const alert = document.getElementById('pomo-alert');
             if (alert.style.display === 'block') {
@@ -514,6 +553,9 @@
 
         // Global Enter Key Listener
         document.addEventListener('keydown', (e) => {
+            // Bypass if color picker is focused
+            if (e.target.id === 'timer-color') return;
+
             if (e.key === 'Enter') {
                 e.preventDefault(); 
                 if (document.getElementById('pomo-alert').style.display === 'block') {
@@ -523,10 +565,16 @@
                 if (['custom-hour', 'custom-min', 'custom-sec'].includes(document.activeElement.id)) {
                     setCustomTime();
                 }
-                if (document.activeElement) document.activeElement.blur();
+                if (document.activeElement && document.activeElement.tagName !== 'BODY') {
+                    document.activeElement.blur();
+                }
                 toggleTimer();
             }
         });
+
+        // Initialize Theme
+        const savedColor = localStorage.getItem('timer-color') || '#00ff41';
+        updateThemeColor(savedColor);
     </script>
 </body>
 </html>
