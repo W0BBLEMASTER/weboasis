@@ -682,147 +682,15 @@
                     }
 
                 } else if (cmd === 'su') {
-                    log("FETCHING_HYPERVISOR_CORE...");
+                    const p = window.open('', 'OasisVM', 'width=1024,height=768');
+                    if(!p) { log('ERR: POPUP_BLOCKED.'); return; }
                     
-                    (async () => {
-                        try {
-                            // POC 6: Patch CheerpX in-memory to handle cross-origin and no-SAB environment
-                            const CHEERPX_URL = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/cheerpx.js";
-                            const CXCORE_URL = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/cxcore.js";
-                            const ALPINE_BASE = "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/";
-                            
-                            log("FETCHING_PATCHED_BOOTLOADER...");
-                            // Fetch both files in parallel
-                            const [rCX, rCPX] = await Promise.all([fetch(CXCORE_URL), fetch(CHEERPX_URL)]);
-                            let cxCode = await rCX.text();
-                            let cpxCode = await rCPX.text();
-                            
-                            // --- PATCH 1: cxcore.js ---
-                            // REMOVED: Destructive SharedArrayBuffer patches (File is already pre-patched)
-                            
-                            // Add memory maximum (using literal match for current file)
-                            cxCode = cxCode.replace("initial:11200,shared:false", "initial:11200,maximum:11200,shared:false");
-                            // Fix wasm path resolution since we are in a Blob
-                            cxCode = cxCode.replace("'cxcore.wasm'", "'" + ALPINE_BASE + "cxcore.wasm'");
-                            cxCode = cxCode.replace("'cxcore-no-return-call.wasm'", "'" + ALPINE_BASE + "cxcore-no-return-call.wasm'");
-                            
-                            const cxBlob = new Blob([cxCode], { type: 'text/javascript' });
-                            const cxBlobUrl = URL.createObjectURL(cxBlob);
-                            log("CORE_KERNEL_PATCHED.");
-
-                            // --- PATCH 2: cheerpx.js (Bootloader) ---
-                            // 1. Force absolute paths for dynamic imports
-                            cpxCode = cpxCode.split("import('./").join("import('" + ALPINE_BASE);
-                            
-                            // 2. Fix baseUrl detection
-                            const c8_start = 'function c8(){';
-                            const c8_end = 'return f.substring((+(c|0)),(+(l+1|0)));}';
-                            if (cpxCode.indexOf(c8_start) !== -1 && cpxCode.indexOf(c8_end) !== -1) {
-                                const head = cpxCode.split(c8_start)[0];
-                                const tail = cpxCode.split(c8_end)[1];
-                                cpxCode = head + 'function c8(){return "' + ALPINE_BASE + '";}' + tail;
-                            }
-                            
-                            // 3. Disable SharedArrayBuffer
-                            cpxCode = cpxCode.split("SharedArrayBuffer").join("ArrayBuffer");
-                            cpxCode = cpxCode.split("self.ArrayBuffer = undefined").join("self.SharedArrayBuffer = undefined");
-
-                            // 4. Fix Memory Limit in loader
-                            cpxCode = cpxCode.replace(
-                                /new\s+WebAssembly\.Memory\(\s*\{\s*initial\s*:\s*11200\s*,\s*shared\s*:\s*false\s*\}\s*\)/g,
-                                'new WebAssembly.Memory({initial:11200,maximum:11200,shared:false})'
-                            );
-
-                            // 5. INJECT PATCHED CXCORE URL
-                            // Replaces `a="cxcore.js"` with blob url to force loading our patched runtime
-                            cpxCode = cpxCode.replace('a="cxcore.js"', `a="${cxBlobUrl}"`);
-
-                            // CRITICAL POC7 FIX: Fix concatenation in hq function to handle Blob URLs
-                            cpxCode = cpxCode.replace("c=c.concat(l)", "c=(l.startsWith('blob:')?l:c.concat(l))");
-
-                            const blob = new Blob([cpxCode], { type: 'text/javascript' });
-                            const url = URL.createObjectURL(blob);
-                            
-                            const module = await import(url);
-                            
-                            // Some versions of cheerpx.js export CheerpX, others set it globally
-                            if (module.CheerpX) window.CheerpX = module.CheerpX;
-                            
-                            if (!window.CheerpX) {
-                                log("CRITICAL_FAILURE: CHEERPX_NOT_FOUND_IN_PATCHED_MODULE.");
-                                return;
-                            }
-
-                            log("CORE_LOADED. INITIALIZING_MONOLITH...");
-                            
-                            // 1. The Purge
-                            document.body.innerHTML = "";
-                            document.body.style.backgroundColor = "black";
-                            document.body.style.margin = "0";
-                            document.body.style.overflow = "hidden";
-
-                            // 2. Boot Log
-                            const bootLog = document.createElement('div');
-                            bootLog.style.color = "#00ff41";
-                            bootLog.style.fontFamily = "monospace";
-                            bootLog.style.padding = "20px";
-                            document.body.appendChild(bootLog);
-                            const bLog = (m) => { bootLog.innerText += m + "\n"; };
-
-                            bLog("CORE_ESTABLISHED. INITIALIZING_VIRTUAL_MACHINE...");
-
-                            // 3. The Vessel Visuals
-                            const cxOverlay = document.createElement('div');
-                            cxOverlay.style.position = "fixed";
-                            cxOverlay.style.top = "0"; cxOverlay.style.left = "0";
-                            cxOverlay.style.width = "100%"; cxOverlay.style.height = "100%";
-                            cxOverlay.style.zIndex = "1000"; cxOverlay.style.pointerEvents = "none";
-                            cxOverlay.style.background = "linear-gradient(rgba(18, 16, 16, 0) 40%, rgba(0, 0, 0, 0.4) 40%), linear-gradient(90deg, rgba(255, 0, 0, 0.1), rgba(0, 255, 0, 0.05), rgba(0, 0, 255, 0.1))";
-                            cxOverlay.style.backgroundSize = "100% 4px, 5px 100%";
-                            document.body.appendChild(cxOverlay);
-
-                            const cxDiv = document.createElement('div');
-                            cxDiv.id = "cx-console";
-                            cxDiv.style.width = "100vw"; cxDiv.style.height = "100vh";
-                            document.body.appendChild(cxDiv);
-
-                            // 4. The Boot
-                            try {
-                                bLog("MOUNTING_DRIVE: / (EXT2)...");
-                                const cx = await CheerpX.Linux.create({
-                                    mounts: [
-                                        { type: "ext2", url: "https://raw.githack.com/W0BBLEMASTER/weboasis/master/alpine/alpine.ext2", path: "/" },
-                                        { type: "cheerpx", path: "/app" }
-                                    ],
-                                    baseUrl: ALPINE_BASE
-                                });
-                                
-                                bLog("ATTACHING_CONSOLE...");
-                                cx.setConsole(cxDiv);
-                                
-                                bLog("EXECUTING_SHELL...");
-                                bootLog.style.display = "none"; // Hide log once shell starts
-                                
-                                await cx.run("/bin/sh", ["-l"], {
-                                    env: [
-                                        "HOME=/app", 
-                                        "TERM=xterm", 
-                                        "PATH=/bin:/usr/bin:/sbin",
-                                        "PS1=\x1b[31mroot\u{22A1}OASIS\x1b[0m> "
-                                    ]
-                                });
-                            } catch(e) {
-                                bLog("!!BOOT_CRASH!!");
-                                bLog("ERROR: " + e);
-                                console.error(e);
-                            }
-                        } catch (err) {
-                            log("CRITICAL_FAILURE: COULD_NOT_LOAD_CHEERPX_CORE.");
-                            console.error(err);
-                        }
-                    })();
+                    log('LAUNCHING_PROVISIONER...');
+                    const h = atob('PCFET0NUWVBFIGh0bWw+PGh0bWw+PGhlYWQ+PHRpdGxlPk9BU0lTX0JPT1Q8L3RpdGxlPgo8c3R5bGU+CmJvZHl7YmFja2dyb3VuZDojMDAwO2NvbG9yOiMwZjA7Zm9udC1mYW1pbHk6bW9ub3NwYWNlO3BhZGRpbmc6NDBweH0uc3RlcHtkaXNwbGF5Om5vbmU7Ym9yZGVyOjFweCBzb2xpZCAjMGYwO3BhZGRpbmc6MjBweDttYXJnaW4tYm90dG9tOjIwcHh9LmFjdGl2ZXtkaXNwbGF5OmJsb2NrfWlucHV0e2Rpc3BsYXk6bm9uZX1sYWJlbHtiYWNrZ3JvdW5kOiMwZjA7Y29sb3I6IzAwMDtwYWRkaW5nOjEwcHg7Zm9udC13ZWlnaHQ6Ym9sZDtjdXJzb3I6cG9pbnRlcn0jYm9vdC1sb2d7bWFyZ2luLXRvcDoyMHB4O2NvbG9yOiM4ODh9I3Rlcm1pbmFsLWNvbnRhaW5lcnt3aWR0aDoxMDAlO2hlaWdodDo0NTBweDttYXJnaW4tdG9wOjIwcHg7Ym9yZGVyOjFweCBzb2xpZCAjMzMzfQo8L3N0eWxlPgo8L2hlYWQ+PGJvZHk+CjxoMT5PQVNJU19QUk9WSVNJT05FUl92NDM8L2gxPgo8ZGl2IGlkPSJib290LWxvZyI+U1lTVEVNX1JFQURZLiBTZXF1ZW50aWFsIGxvYWQgcmVxdWlyZWQ6PC9kaXY+CjxkaXYgaWQ9InN0ZXAxIiBjbGFzcz0ic3RlcCBhY3RpdmUiPjxwPjEuIExvYWQgPGI+bGlidjg2LmpzPC9iPiAoRW5naW5lKTwvcD48bGFiZWwgZm9yPSJpMSI+U0VMRUNUX0ZJTEU8L2xhYmVsPjxpbnB1dCB0eXBlPSJmaWxlIiBpZD0iaTEiIGFjY2VwdD0iLmpzIiAvPjwvZGl2Pgo8ZGl2IGlkPSJzdGVwMiIgY2xhc3M9InN0ZXAiPjxwPjIuIExvYWQgPGI+djg2Lndhc208L2I+IChDb3JlKTwvcD48bGFiZWwgZm9yPSJpMiI+U0VMRUNUX0ZJTEU8L2xhYmVsPjxpbnB1dCB0eXBlPSJmaWxlIiBpZD0iaTIiIGFjY2VwdD0iLndhc20iIC8+PC9kaXY+CjxkaXYgaWQ9InN0ZXAzIiBjbGFzcz0ic3RlcCI+PHA+My4gTG9hZCA8Yj5zZWFiaW9zLmJpbjwvYj4gKEJJT1MpPC9wPjxsYWJlbCBmb3I9ImkzIj5TRUxFQ1RfRklMRTwvbGFiZWw+PGlucHV0IHR5cGU9ImZpbGUiIGlkPSJpMyIgYWNjZXB0PSIuYmluIiAvPjwvZGl2Pgo8ZGl2IGlkPSJzdGVwNCIgY2xhc3M9InN0ZXAiPjxwPjQuIExvYWQgPGI+dmdhYmlvcy5iaW48L2I+IChWaWRlbyk8L3A+PGxhYmVsIGZvcj0iaTQiPlNFTEVDVF9GSUxFPC9sYWJlbD48aW5wdXQgdHlwZT0iZmlsZSIgaWQ9Imk0IiBhY2NlcHQ9Ii5iaW4iIC8+PC9kaXY+CjxkaXYgaWQ9InN0ZXA1IiBjbGFzcz0ic3RlcCI+PHA+NS4gTG9hZCA8Yj5hbHBpbmUuaXNvPC9iPiAoT1MpPC9wPjxsYWJlbCBmb3I9Imk1Ij5TRUxFQ1RfRklMRTwvbGFiZWw+PGlucHV0IHR5cGU9ImZpbGUiIGlkPSJpNSIgYWNjZXB0PSIuaXNvIiAvPjwvZGl2Pgo8ZGl2IGlkPSJ0ZXJtaW5hbC1jb250YWluZXIiPjwvZGl2Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS94dGVybUA1LjMuMC9saWIveHRlcm0uanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS94dGVybS1hZGRvbi1maXRAMC44LjAvbGliL3h0ZXJtLWFkZG9uLWZpdC5qcyI+PC9zY3JpcHQ+CjxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS94dGVybUA1LjMuMC9jc3MveHRlcm0uY3NzIiAvPgo8c2NyaXB0Pgpjb25zdCBkYXRhID0ge307CmNvbnN0IGJvb3RMb2cgPSAobSkgPT4gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Jvb3QtbG9nJykuaW5uZXJUZXh0ICs9ICJcblsrXSAiICsgbTsKZnVuY3Rpb24gbmV4dChjLCBuKSB7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic3RlcCIrYykuY2xhc3NMaXN0LnJlbW92ZSgiYWN0aXZlIik7CiAgICBpZihuKSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic3RlcCIrbikuY2xhc3NMaXN0LmFkZCgiYWN0aXZlIik7Cn0KZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImkxIikub25jaGFuZ2UgPSAoZSkgPT4gewogICAgY29uc3QgciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICByLm9ubG9hZCA9ICh2KSA9PiB7CiAgICAgICAgY29uc3QgcyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNjcmlwdCIpOwogICAgICAgIHMudGV4dENvbnRlbnQgPSB2LnRhcmdldC5yZXN1bHQ7CiAgICAgICAgZG9jdW1lbnQuaGVhZC5hcHBlbmRDaGlsZChzKTsKICAgICAgICBib290TG9nKCJFTkdJTkVfUkVBRFkuIik7CiAgICAgICAgbmV4dCgxLCAyKTsKICAgIH07CiAgICByLnJlYWRBc1RleHQoZS50YXJnZXQuZmlsZXNbMF0pOwp9Owpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiaTIiKS5vbmNoYW5nZSA9IGFzeW5jIChlKSA9PiB7IGRhdGEudyA9IGF3YWl0IGUudGFyZ2V0LmZpbGVzWzBdLmFycmF5QnVmZmVyKCk7IGJvb3RMb2coIkNPUkVfUkVBRFkuIik7IG5leHQoMiwgMyk7IH07CmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJpMyIpLm9uY2hhbmdlID0gYXN5bmMgKGUpID0+IHsgZGF0YS5iID0gYXdhaXQgZS50YXJnZXQuZmlsZXNbMF0uYXJyYXlCdWZmZXIoKTsgYm9vdExvZygiQklPU19SRUFEWS4iKTsgbmV4dCgzLCA0KTsgfTsKZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImk0Iikub25jaGFuZ2UgPSBhc3luYyAoZSkgPT4geyBkYXRhLnYgPSBhd2FpdCBlLnRhcmdldC5maWxlc1swXS5hcnJheUJ1ZmZlcigpOyBib290TG9nKCJWR0FfUkVBRFkuIik7IG5leHQoNCwgNSk7IH07CmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJpNSIpLm9uY2hhbmdlID0gYXN5bmMgKGUpID0+IHsKICAgIGRhdGEuaSA9IGF3YWl0IGUudGFyZ2V0LmZpbGVzWzBdLmFycmF5QnVmZmVyKCk7CiAgICBib290TG9nKCJJU09fUkVBRFkuIElOSVRJQUxJWklOR19WODZfQk9PVC4uLiIpOwogICAgbmV4dCg1LCAwKTsKICAgIGJvb3QoKTsKfTsKZnVuY3Rpb24gYm9vdCgpIHsKICAgIHRyeSB7CiAgICAgICAgY29uc3QgdGVybSA9IG5ldyBUZXJtaW5hbCh7IHRoZW1lOiB7IGJhY2tncm91bmQ6ICcjMDAwJywgZm9yZWdyb3VuZDogJyMwZjAnIH0sIGZvbnRGYW1pbHk6ICdtb25vc3BhY2UnLCBmb250U2l6ZTogMTYgfSk7CiAgICAgICAgY29uc3QgZml0QWRkb24gPSBuZXcgRml0QWRkb24uRml0QWRkb24oKTsKICAgICAgICB0ZXJtLmxvYWRBZGRvbihmaXRBZGRvbik7CiAgICAgICAgdGVybS5vcGVuKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0ZXJtaW5hbC1jb250YWluZXInKSk7CiAgICAgICAgZml0QWRkb24uZml0KCk7CiAgICAgICAgdGVybS53cml0ZWxuKCItLS0gUkVBTF9YODZfRU1VTEFUSU9OX0JPT1RfU0VRVUVOQ0UgLS0tIik7CiAgICAgICAgCiAgICAgICAgdmFyIGVtdSA9IG5ldyB3aW5kb3cuVjg2U3RhcnRlcih7CiAgICAgICAgICAgIHdhc21fZGF0YTogbmV3IFVpbnQ4QXJyYXkoZGF0YS53KSwKICAgICAgICAgICAgYmlvczogeyBkYXRhOiBuZXcgVWludDhBcnJheShkYXRhLmIpIH0sCiAgICAgICAgICAgIHZnYV9iaW9zOiB7IGRhdGE6IG5ldyBVaW50OEFycmF5KGRhdGEudikgfSwKICAgICAgICAgICAgY2Ryb206IHsgZGF0YTogbmV3IFVpbnQ4QXJyYXkoZGF0YS5pKSB9LAogICAgICAgICAgICBtZW1vcnlfc2l6ZTogNTEyICogMTAyNCAqIDEwMjQsCiAgICAgICAgICAgIGF1dG9zdGFydDogdHJ1ZQogICAgICAgIH0pOwogICAgICAgIAogICAgICAgIGVtdS5hZGRfbGlzdGVuZXIoInNlcmlhbDAtb3V0cHV0LWNoYXIiLCAoYykgPT4gdGVybS53cml0ZShjKSk7CiAgICAgICAgdGVybS5vbkRhdGEoKGQpID0+IGVtdS5zZXJpYWwwX3NlbmQoZCkpOwogICAgICAgIHdpbmRvdy5vbnJlc2l6ZSA9ICgpID0+IGZpdEFkZG9uLmZpdCgpOwogICAgICAgIGJvb3RMb2coIkJPT1RfU1VDQ0VTUzogQ1BVX0VYRUNVVElORy4iKTsKICAgIH0gY2F0Y2goZXJyKSB7IAogICAgICAgIGJvb3RMb2coIkNSSVRJQ0FMX0JPT1RfRVJST1I6ICIgKyBlcnIpOwogICAgfQp9Cjwvc2NyaXB0PjwvYm9keT48L2h0bWw+');
+                    p.document.open();
+                    p.document.write(h);
+                    p.document.close();
                     return;
-
                 } else if (cmd === 'game' || cmd === 'amason') {
                     const ready = await initPyodide();
                     if (ready) {
