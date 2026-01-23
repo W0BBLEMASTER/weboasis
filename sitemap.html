@@ -1,318 +1,205 @@
-<div dir="ltr" style="text-align: left;" trbidi="on">
-<style type="text/css">
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebOas.is | SITEMAP_DEBUG</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --theme-color: #00ff41;
+        }
 
-/* WebOas.is Visual Sitemap Core */
-.weboasis-sitemap { 
-    background-color: #000; 
-    color: #00ff41; 
-    font-family: 'Share Tech Mono', monospace; 
-    font-size: 14px; 
-    border: 1px solid #00ff41;
-    box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
-    border-radius: 2px;
-    padding: 10px;
-}
+        body {
+            background: #000;
+            color: var(--theme-color);
+            font-family: 'Share Tech Mono', monospace;
+            padding: 40px;
+            margin: 0;
+            overflow-x: hidden;
+        }
 
-/* Data Node Headers (Labels) */
-.weboasis-sitemap .toc-header { 
-    color: #00ff41; 
-    font-weight: bold; 
-    text-transform: uppercase;
-    background-color: #0a0a0a; 
-    margin: 5px 0; 
-    padding: 12px; 
-    cursor: pointer; 
-    border: 1px solid #333;
-    transition: 0.2s;
-    letter-spacing: 2px;
-}
+        #native-picker-wrap {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--theme-color);
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+        }
 
-.weboasis-sitemap .toc-header:hover { 
-    background: #00ff41; 
-    color: #000;
-    box-shadow: 0 0 10px #00ff41;
-}
+        .weboasis-sitemap { 
+            max-width: 900px;
+            margin: auto;
+            border: 1px solid var(--theme-color);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+            border-radius: 2px;
+            padding: 20px;
+            background: #050505;
+        }
 
-.weboasis-sitemap .toc-header:before { 
-    content: '[+]'; 
-    float: right; 
-    margin-left: 10px;
-}
+        .toc-header { 
+            color: var(--theme-color); 
+            font-weight: bold; 
+            text-transform: uppercase;
+            background-color: #0a0a0a; 
+            margin: 5px 0; 
+            padding: 15px; 
+            cursor: pointer; 
+            border: 1px solid #333;
+            transition: 0.2s;
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-.weboasis-sitemap .toc-header.active { 
-    border-color: #00ff41; 
-    background: #050505;
-}
+        .toc-header:hover { 
+            background: var(--theme-color); 
+            color: #000;
+            box-shadow: 0 0 10px var(--theme-color);
+        }
 
-.weboasis-sitemap .toc-header.active:before { 
-    content: '[-]';
-}
+        .loading { 
+            display: block; 
+            padding: 30px; 
+            text-align: center;
+            color: var(--theme-color); 
+            text-transform: uppercase; 
+            animation: blink 1s infinite;
+        }
 
-/* Loading State */
-.weboasis-sitemap .loading { 
-    display: block; 
-    padding: 30px; 
-    text-align: center;
-    color: #00ff41; 
-    text-transform: uppercase; 
-    animation: blink 1s infinite;
-}
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        ol { 
+            margin: 0; 
+            padding: 10px 20px; 
+            list-style: none; 
+            border-left: 1px dashed var(--theme-color);
+            margin-left: 15px;
+        }
 
-/* Link List */
-.weboasis-sitemap ol { 
-    margin: 0; 
-    padding: 5px 20px; 
-    list-style: none; 
-    border-left: 1px dashed #00ff41;
-    margin-left: 15px;
-}
+        li { 
+            padding: 10px 0; 
+            border-bottom: 1px solid #111;
+        }
 
-.weboasis-sitemap li { 
-    padding: 8px 0; 
-    border-bottom: 1px solid #111;
-}
+        li::before { 
+            content: "> "; 
+            color: var(--theme-color);
+        }
 
-.weboasis-sitemap li::before { 
-    content: "> "; 
-    color: #00ff41;
-}
+        a { 
+            color: var(--theme-color) !important; 
+            text-decoration: none; 
+            opacity: 0.8;
+            transition: 0.2s;
+        }
 
-.weboasis-sitemap a { 
-    color: #00ff41 !important; 
-    text-decoration: none; 
-    opacity: 0.8;
-}
+        a:hover { 
+            opacity: 1; 
+            text-shadow: 0 0 5px var(--theme-color);
+        }
 
-.weboasis-sitemap a:hover { 
-    opacity: 1; 
-    text-shadow: 0 0 5px #00ff41;
-}
+        .new-tag {
+            font-size: 9px;
+            background: var(--theme-color);
+            color: #000;
+            padding: 1px 4px;
+            margin-left: 8px;
+            font-weight: bold;
+        }
 
-/* New Content Tag */
-.new-tag {
-    font-size: 9px;
-    background: #00ff41;
-    color: #000;
-    padding: 1px 4px;
-    margin-left: 8px;
-    font-weight: bold;
-}
-</style>
+        .logo-box {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+        }
 
-<div class="weboasis-sitemap" id="weboasis-sitemap">
-    <div style="text-align:center; padding: 20px;">
-        <img src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/logo.svg" style="height: 50px; filter: drop-shadow(0 0 5px #00ff41);" />
-        <h2 style="letter-spacing: 5px; margin-top: 10px;">CORE_SITEMAP</h2>
+        .logo-box img {
+            height: 60px;
+            filter: drop-shadow(0 0 5px var(--theme-color));
+        }
+    </style>
+</head>
+<body>
+
+    <div id="native-picker-wrap">
+        <label for="timer-color">SYSTEM_HUE:</label>
+        <input type="color" id="timer-color" value="#00ff41" 
+            oninput="updateThemeColor(this.value)">
     </div>
-    
-    <span class="loading">Accessing Mainframe...</span>
-    
-    <script type="text/javascript">
-    //<![CDATA[
-    (async function() {
+
+    <div class="weboasis-sitemap" id="weboasis-sitemap">
+        <div class="logo-box">
+            <img src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/logo.svg" />
+            <h2 style="letter-spacing: 5px; margin-top: 15px;">CORE_SITEMAP_DEBUG</h2>
+        </div>
+        
+        <span class="loading">Accessing Mainframe...</span>
+    </div>
+
+    <script>
         const container = document.getElementById('weboasis-sitemap');
-        const loading = container.querySelector('.loading');
         const sitemapUrl = 'https://raw.githack.com/W0BBLEMASTER/weboasis/master/sitemap.xml';
 
-        try {
-            const response = await fetch(sitemapUrl);
-            const text = await response.text();
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(text, "text/xml");
-            const urls = xmlDoc.getElementsByTagName("url");
-            
-            if (loading) loading.remove();
-            
-            const list = document.createElement('ol');
-            Array.from(urls).forEach(urlNode => {
-                const loc = urlNode.getElementsByTagName("loc")[0].textContent;
-                const priority = urlNode.getElementsByTagName("priority")[0]?.textContent || "0.5";
-                
-                // Get name from URL
-                let name = loc.replace('https://wobblemaster.blogspot.com/', '').replace('index.html', '').replace(/\/$/, '');
-                if (!name) name = "HOME_NODE";
-                name = name.toUpperCase();
-
-                const li = document.createElement('li');
-                li.innerHTML = `<a href="${loc}">${name}</a> <span class="new-tag">P:${priority}</span>`;
-                list.appendChild(li);
-            });
-            
-            const header = document.createElement('div');
-            header.className = 'toc-header active';
-            header.textContent = 'MASTER_REPOSITORY_NODES';
-            
-            container.appendChild(header);
-            container.appendChild(list);
-
-        } catch (e) {
-            if (loading) loading.textContent = "CORE_ACCESS_DENIED: " + e.message;
-            console.error(e);
+        function updateThemeColor(color) {
+            document.documentElement.style.setProperty('--theme-color', color);
+            localStorage.setItem('timer-color', color);
+            const picker = document.getElementById('timer-color');
+            if (picker && picker.value !== color) picker.value = color;
         }
-    })();
-    //]]>
-    </script>
-</div>
-</div>
-<div dir="ltr" style="text-align: left;" trbidi="on">
-<style type="text/css">
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-/* WebOas.is Visual Sitemap Core */
-.weboasis-sitemap { 
-    background-color: #000; 
-    color: #00ff41; 
-    font-family: 'Share Tech Mono', monospace; 
-    font-size: 14px; 
-    border: 1px solid #00ff41;
-    box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
-    border-radius: 2px;
-    padding: 10px;
-}
-
-/* Data Node Headers (Labels) */
-.weboasis-sitemap .toc-header { 
-    color: #00ff41; 
-    font-weight: bold; 
-    text-transform: uppercase;
-    background-color: #0a0a0a; 
-    margin: 5px 0; 
-    padding: 12px; 
-    cursor: pointer; 
-    border: 1px solid #333;
-    transition: 0.2s;
-    letter-spacing: 2px;
-}
-
-.weboasis-sitemap .toc-header:hover { 
-    background: #00ff41; 
-    color: #000;
-    box-shadow: 0 0 10px #00ff41;
-}
-
-.weboasis-sitemap .toc-header:before { 
-    content: '[+]'; 
-    float: right; 
-    margin-left: 10px;
-}
-
-.weboasis-sitemap .toc-header.active { 
-    border-color: #00ff41; 
-    background: #050505;
-}
-
-.weboasis-sitemap .toc-header.active:before { 
-    content: '[-]';
-}
-
-/* Loading State */
-.weboasis-sitemap .loading { 
-    display: block; 
-    padding: 30px; 
-    text-align: center;
-    color: #00ff41; 
-    text-transform: uppercase; 
-    animation: blink 1s infinite;
-}
-
-@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-/* Link List */
-.weboasis-sitemap ol { 
-    margin: 0; 
-    padding: 5px 20px; 
-    list-style: none; 
-    border-left: 1px dashed #00ff41;
-    margin-left: 15px;
-}
-
-.weboasis-sitemap li { 
-    padding: 8px 0; 
-    border-bottom: 1px solid #111;
-}
-
-.weboasis-sitemap li::before { 
-    content: "> "; 
-    color: #00ff41;
-}
-
-.weboasis-sitemap a { 
-    color: #00ff41 !important; 
-    text-decoration: none; 
-    opacity: 0.8;
-}
-
-.weboasis-sitemap a:hover { 
-    opacity: 1; 
-    text-shadow: 0 0 5px #00ff41;
-}
-
-/* New Content Tag */
-.new-tag {
-    font-size: 9px;
-    background: #00ff41;
-    color: #000;
-    padding: 1px 4px;
-    margin-left: 8px;
-    font-weight: bold;
-}
-</style>
-
-<div class="weboasis-sitemap" id="weboasis-sitemap">
-    <div style="text-align:center; padding: 20px;">
-        <img src="https://cdn.jsdelivr.net/gh/W0BBLEMASTER/weboasis@master/media/logo.svg" style="height: 50px; filter: drop-shadow(0 0 5px #00ff41);" />
-        <h2 style="letter-spacing: 5px; margin-top: 10px;">CORE_SITEMAP</h2>
-    </div>
-    
-    <span class="loading">Accessing Mainframe...</span>
-    
-    <script type="text/javascript">
-    //<![CDATA[
-    (async function() {
-        const container = document.getElementById('weboasis-sitemap');
-        const loading = container.querySelector('.loading');
-        const sitemapUrl = 'https://raw.githack.com/W0BBLEMASTER/weboasis/master/sitemap.xml';
-
-        try {
-            const response = await fetch(sitemapUrl);
-            const text = await response.text();
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(text, "text/xml");
-            const urls = xmlDoc.getElementsByTagName("url");
-            
-            if (loading) loading.remove();
-            
-            const list = document.createElement('ol');
-            Array.from(urls).forEach(urlNode => {
-                const loc = urlNode.getElementsByTagName("loc")[0].textContent;
-                const priority = urlNode.getElementsByTagName("priority")[0]?.textContent || "0.5";
+        async function initSitemap() {
+            try {
+                const response = await fetch(sitemapUrl);
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                const urls = xmlDoc.getElementsByTagName("url");
                 
-                // Get name from URL
-                let name = loc.replace('https://wobblemaster.blogspot.com/', '').replace('index.html', '').replace(/\/$/, '');
-                if (!name) name = "HOME_NODE";
-                name = name.toUpperCase();
+                const loading = container.querySelector('.loading');
+                if (loading) loading.remove();
+                
+                const list = document.createElement('ol');
+                Array.from(urls).forEach(urlNode => {
+                    const loc = urlNode.getElementsByTagName("loc")[0].textContent;
+                    const priority = urlNode.getElementsByTagName("priority")[0]?.textContent || "0.5";
+                    
+                    let name = loc.replace('https://wobblemaster.blogspot.com/', '').replace('index.html', '').replace(/\/$/, '');
+                    if (!name) name = "HOME_NODE";
+                    name = name.toUpperCase();
 
-                const li = document.createElement('li');
-                li.innerHTML = `<a href="${loc}">${name}</a> <span class="new-tag">P:${priority}</span>`;
-                list.appendChild(li);
-            });
-            
-            const header = document.createElement('div');
-            header.className = 'toc-header active';
-            header.textContent = 'MASTER_REPOSITORY_NODES';
-            
-            container.appendChild(header);
-            container.appendChild(list);
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="${loc}">${name}</a> <span class="new-tag">P:${priority}</span>`;
+                    list.appendChild(li);
+                });
+                
+                const header = document.createElement('div');
+                header.className = 'toc-header';
+                header.innerHTML = '<span>MASTER_REPOSITORY_NODES</span><span>[-]</span>';
+                
+                container.appendChild(header);
+                container.appendChild(list);
 
-        } catch (e) {
-            if (loading) loading.textContent = "CORE_ACCESS_DENIED: " + e.message;
-            console.error(e);
+            } catch (e) {
+                const loading = container.querySelector('.loading');
+                if (loading) loading.textContent = "CORE_ACCESS_DENIED: " + e.message;
+            }
         }
-    })();
-    //]]>
+
+        // Init Theme
+        const savedColor = localStorage.getItem('timer-color') || '#00ff41';
+        updateThemeColor(savedColor);
+        
+        // Init Sitemap
+        initSitemap();
     </script>
-</div>
-</div>
+</body>
+</html>
