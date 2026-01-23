@@ -7,13 +7,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
+        :root {
+            --theme-color: #00ff41;
+        }
+
         body {
             background: #0a0a0a;
-            color: #00ff41;
+            color: var(--theme-color);
             font-family: 'Share+Tech+Mono', monospace;
             overflow-x: hidden;
             margin: 0;
             padding: 0;
+        }
+
+        #native-picker-wrap {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--theme-color);
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
         }
 
         .scanline {
@@ -44,9 +62,9 @@
             font-size: 3rem;
             text-transform: uppercase;
             letter-spacing: 5px;
-            border-bottom: 2px solid #00ff41;
+            border-bottom: 2px solid var(--theme-color);
             padding-bottom: 10px;
-            text-shadow: 0 0 10px #00ff41;
+            text-shadow: 0 0 10px var(--theme-color);
         }
 
         .glitch {
@@ -90,7 +108,7 @@
             margin-top: 40px;
             background: rgba(0, 255, 65, 0.05);
             padding: 20px;
-            border-left: 5px solid #00ff41;
+            border-left: 5px solid var(--theme-color);
             box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
         }
 
@@ -114,20 +132,29 @@
             display: inline-block;
             margin-top: 20px;
             padding: 10px 20px;
-            border: 1px solid #00ff41;
-            color: #00ff41;
+            border: 1px solid var(--theme-color);
+            color: var(--theme-color);
             text-decoration: none;
             transition: all 0.3s;
+            cursor: pointer;
+            background: transparent;
+            font-family: 'Share+Tech+Mono', monospace;
         }
 
         .btn:hover {
-            background: #00ff41;
+            background: var(--theme-color);
             color: #000;
-            box-shadow: 0 0 20px #00ff41;
+            box-shadow: 0 0 20px var(--theme-color);
         }
     </style>
 </head>
 <body>
+    <div id="native-picker-wrap">
+        <label for="timer-color">SYSTEM_HUE:</label>
+        <input type="color" id="timer-color" value="#00ff41" 
+            oninput="updateThemeColor(this.value)">
+    </div>
+
     <div class="scanline"></div>
     <div class="container">
         <h1 class="glitch">ABOUT / CHANGELOG</h1>
@@ -138,17 +165,7 @@
         </div>
 
         <div class="section">
-            <h3>[ LOG_09: PROTO9 ]<h3>
-            <ul>
-                <li>CORE: CMD_EMU active. Oasis-Term online.<li>
-                <li>ENGINE: CheerpX + Pyodide integration (Linux/Python runtime).<li>
-                <li>FEATURE: Pomodoro Timer v1.3 (Auto-Max HH:MM:SS).<li>
-                <li>FIX: Sitemap redirector & Custom CSS loader.<li>
-            </ul>
-        </div>
-
-        <div class="section">
-            <h3>[ LOG_08: PROTO8 ]<h3>
+            <h3>[ LOG_08: PROTO8 ]</h3>
             <ul>
                 <li>SEO: GOD MODE meta tags injected.</li>
                 <li>LEGACY: Original Webby metadata restored for ranking dominance.</li>
@@ -168,5 +185,18 @@
             INIT_TIME: DECEMBUARY 2025 
         </div>
     </div>
+
+    <script>
+        function updateThemeColor(color) {
+            document.documentElement.style.setProperty('--theme-color', color);
+            localStorage.setItem('timer-color', color);
+            const picker = document.getElementById('timer-color');
+            if (picker && picker.value !== color) picker.value = color;
+        }
+
+        // Init Theme
+        const savedColor = localStorage.getItem('timer-color') || '#00ff41';
+        updateThemeColor(savedColor);
+    </script>
 </body>
 </html>
