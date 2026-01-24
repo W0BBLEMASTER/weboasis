@@ -69,9 +69,11 @@
                 const n = document.getElementById("notesInput");
                 if(n) { n.value = await l(); n.addEventListener("input", () => s(n.value)); }
                 const _r = window.resetAllToDefault;
-                window.resetAllToDefault = async function() {
-                    const t = await l(); if(_r) _r(); await s(t); setTimeout(()=>location.reload(), 100);
-                };
+                Object.assign(window, {
+                    resetAllToDefault: async function() {
+                        const t = await l(); if(_r) _r(); await s(t); setTimeout(()=>location.reload(), 100);
+                    }
+                });
             });
         })();
         //]]>
